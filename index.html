@@ -2854,7 +2854,7 @@ body:not([data-root-route="dashboard"]) #dashboardView .inventory-toolbar-row{di
 <div class="field"><label>Super Admin Username</label><input class="input" id="setupOwnerUsername" placeholder="superadmin" required=""/></div>
 <div class="field"><label>Super Admin Password</label><input autocomplete="new-password" class="input" id="setupOwnerPassword" minlength="10" placeholder="At least 10 chars with upper, lower, number" required="" type="password"/></div>
 </div>
-<div class="field"><label>Admin Name (Optional)</label><input class="input" id="setupAdminName" value="Operations Admin"/></div>
+<div class="field"><label>Admin Name (Optional)</label><input class="input" id="setupAdminName" placeholder="Operations Admin"/></div>
 <div class="form-row">
 <div class="field"><label>Admin Username (Optional)</label><input class="input" id="setupAdminUsername" placeholder="admin"/></div>
 <div class="field"><label>Admin Password (Optional)</label><input autocomplete="new-password" class="input" id="setupAdminPassword" minlength="10" placeholder="At least 10 chars with upper, lower, number" type="password"/></div>
@@ -5877,16 +5877,18 @@ function canonicalCommissionName(value='') {
             const adminPassword = String(action.adminPassword || '');
             const normalizedOwner = ownerUsername.toLowerCase();
             const normalizedAdmin = adminUsername.toLowerCase();
-            const includeAdmin = !!(adminName || adminUsername || adminPassword);
+            const includeAdmin = !!String(adminPassword || '').trim();
             if (!ownerName || !ownerUsername || !passwordMeetsPolicy(ownerPassword)) return false;
-            if (includeAdmin && (!adminName || !adminUsername || !passwordMeetsPolicy(adminPassword))) return false;
-            const allNames = [normalizedOwner].concat(includeAdmin ? [normalizedAdmin] : []).filter(Boolean);
+            if (includeAdmin && !passwordMeetsPolicy(adminPassword)) return false;
+            const allNames = [normalizedOwner].concat(includeAdmin ? [normalizedAdmin || 'admin'] : []).filter(Boolean);
             if (new Set(allNames).size !== allNames.length) return false;
             const users = [
               normalizeUser({ id:createId('u'), role:'super-admin', name:ownerName, username:ownerUsername, password:ownerPassword })
             ];
             if (includeAdmin) {
-              users.push(normalizeUser({ id:createId('u'), role:'admin', name:adminName, username:adminUsername, password:adminPassword }));
+              const safeAdminName = adminName || 'Operations Admin';
+              const safeAdminUsername = adminUsername || 'admin';
+              users.push(normalizeUser({ id:createId('u'), role:'admin', name:safeAdminName, username:safeAdminUsername, password:adminPassword }));
             }
             state.users = users;
             state.meta = { ...(state.meta || {}), secureSetupComplete:true, passwordVersion:3, authVersion:AUTH_SCHEMA_VERSION, securedAt:nowIso(), authRecoveredAt:nowIso(), githubFirstRunComplete:true };
@@ -10064,7 +10066,7 @@ function openQuotationRequest(unitId) {
           adminUsername: sanitizeText(byId('setupAdminUsername').value),
           adminPassword: byId('setupAdminPassword').value
         });
-        if (!ok) { byId('setupHelp').textContent = 'Setup failed. Super Admin password must be at least 10 characters and include uppercase, lowercase, and a number. Optional Admin fields can be blank, but if used they must meet the same rule.'; return; }
+        if (!ok) { byId('setupHelp').textContent = 'Setup failed. Super Admin password must be at least 10 characters and include uppercase, lowercase, and a number. Optional Admin is only created when an Admin password is entered.'; return; }
         Modal.close('setupModal');
         Store.refreshAuthStatus();
         UI.renderAuthStatus();
