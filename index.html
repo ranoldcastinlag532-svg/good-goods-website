@@ -15,6 +15,7 @@
 <meta content="#000000" name="theme-color"/>
 <meta content="noindex, nofollow" name="robots"/>
 <title>Good Goods — Clean Consolidated Rebuild</title>
+<!-- GG RULES DIRECT CLEAN PASS: duplicate DOM IDs removed; report export uses delegated data action; reports style/script IDs separated; JS syntax audited. -->
 <!-- GG SECURITY HARDENING PASS: v3-only auth, SA/Admin-only roles, CSP, upload validation, safer dynamic field escaping. -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -684,9 +685,9 @@ body::before,body::after{display:none !important;}
   .login-cta,.login-secondary{height:48px !important;font-size:14px !important;}
 }
 
-/* route visibility ownership moved to JS UI.route */
+/* route visibility ownership: data-root-route is the single active display owner; route-* classes keep non-display theme hooks only. */
 body.route-login{background:#000 !important;}
-#publicView,#dashboardView,#loginView{display:none;} /* base hidden only; data-root-route is the single visibility owner */
+#publicView,#dashboardView,#loginView{display:none;} /* safe preboot hidden state; gg-root-route-lock opens the active route only. */
 
 /* landing logo integration */
 .gg-logo-landing{display:grid !important;justify-items:center !important;gap:12px !important;margin:0 0 18px !important;}
@@ -2562,6 +2563,11 @@ th{font-size:10px !important;}
 .analytics-click-hit{grid-column:1/-1;display:grid;grid-template-columns:minmax(150px,240px) minmax(0,1fr) 72px;align-items:center;width:100%;background:none;border:none;padding:0;cursor:pointer;text-align:left}
 .analytics-click-hit:hover .analytics-bar-label{color:#fff}
 .analytics-click-hit:hover .analytics-bar-track{border-color:#3a4d73}
+.analytics-source-hit{appearance:none;text-align:left;cursor:pointer;color:inherit;font:inherit}
+.analytics-source-hit:hover,.analytics-bar-hit:hover,.analytics-chip-hit:hover{transform:translateY(-1px);border-color:#3a4d73!important}
+.analytics-bar-hit{appearance:none;background:transparent;border:0;color:inherit;font:inherit;text-align:left;cursor:pointer;width:100%}
+.analytics-chip-hit{appearance:none;cursor:pointer;font:inherit}
+
 .analytics-chip-row{display:flex;flex-wrap:wrap;gap:8px}
 .analytics-chip{display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:0 12px;border-radius:999px;border:1px solid #26334d;background:#0d1320;color:#c6d5ef;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
 .analytics-chip.normal{background:rgba(102,242,160,.10);color:#baffd5;border-color:rgba(102,242,160,.24)}
@@ -3005,6 +3011,79 @@ select.input,.select{height:var(--gg-field-h)!important;}
   #dashboardView .metric-label{font-size:8px!important;}
   #dashboardView .metric-note{font-size:8.5px!important;}
 }
+</style>
+
+
+
+<style id="gg-reports-dashboard-ui-boxes">
+/* ===== GG Reports Dashboard UI Boxes — clean source-of-truth report cards ===== */
+#reportsSection{max-width:var(--center-section, 1320px);margin:0 auto;padding:0 0 28px;}
+#reportsSection .section-head{align-items:flex-end;margin:0 auto 18px;text-align:center;display:grid;grid-template-columns:1fr auto;gap:18px;width:min(1320px,calc(100vw - 32px));}
+#reportsSection .section-head h2{font-family:var(--display, Georgia, serif);font-size:clamp(30px,3vw,44px);line-height:1;margin:0;color:#fff;}
+#reportsSection .section-head p{margin:8px auto 0;color:#b9c9e8;line-height:1.55;font-size:14px;max-width:820px;}
+#reportsSection .report-export-row{display:flex;gap:10px;justify-content:flex-end;align-items:center;flex-wrap:wrap;}
+.report-dashboard-shell{width:min(1320px,calc(100vw - 32px));margin:0 auto;display:grid;gap:18px;}
+.report-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.report-kpi-card{min-height:150px;padding:20px 22px;border-radius:24px;border:1px solid rgba(130,168,220,.24);background:linear-gradient(180deg,rgba(21,28,42,.98),rgba(10,14,22,.98));box-shadow:inset 0 1px 0 rgba(255,255,255,.045);display:grid;align-content:space-between;gap:12px;overflow:hidden;position:relative;}
+.report-kpi-card:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 14% 0%,rgba(157,190,255,.12),transparent 42%);pointer-events:none;}
+.report-kpi-card .label{position:relative;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#a9bedf;font-weight:800;}
+.report-kpi-card .value{position:relative;font-family:var(--display, Georgia, serif);font-size:clamp(28px,3vw,42px);line-height:.95;color:#fff;font-weight:800;word-break:break-word;}
+.report-kpi-card .note{position:relative;color:#b8c6de;font-size:13px;line-height:1.45;}
+.report-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+.report-card{min-height:280px;padding:22px;border-radius:26px;border:1px solid rgba(130,168,220,.22);background:linear-gradient(180deg,rgba(17,23,35,.98),rgba(8,11,18,.98));box-shadow:inset 0 1px 0 rgba(255,255,255,.04);display:grid;gap:16px;align-content:start;}
+.report-card h3{margin:0;color:#fff;font-size:18px;font-weight:900;letter-spacing:.02em;}
+.report-bar-row{display:grid;grid-template-columns:minmax(100px,160px) minmax(180px,1fr) minmax(74px,max-content);gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.075);}
+.report-bar-row:last-child{border-bottom:0;}
+.report-bar-row strong{min-width:0;color:#fff;font-size:14px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.report-bar-row span{justify-self:end;color:#dfe9ff;font-weight:900;font-size:14px;white-space:nowrap;}
+.report-bar-track{height:16px;border-radius:999px;border:1px solid rgba(143,178,238,.26);background:#0b111d;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+.report-bar-fill{height:100%;min-width:28px;border-radius:999px;background:linear-gradient(90deg,#dbe8ff,#96bcff);box-shadow:0 0 20px rgba(137,181,255,.18);}
+.report-card .empty{padding:24px;border-radius:18px;border:1px dashed rgba(143,178,238,.24);background:rgba(255,255,255,.018);color:#aebbd0;text-align:center;}
+@media (max-width:1100px){.report-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.report-grid{grid-template-columns:1fr;}#reportsSection .section-head{grid-template-columns:1fr;text-align:left;align-items:start;}#reportsSection .section-head p{margin-left:0}.report-export-row{justify-content:flex-start;}}
+@media (max-width:640px){#reportsSection .section-head,.report-dashboard-shell{width:min(100vw - 18px,1320px);}.report-kpi-grid{grid-template-columns:1fr;}.report-kpi-card{min-height:132px;padding:18px;}.report-card{padding:18px;border-radius:22px;}.report-bar-row{grid-template-columns:1fr;gap:8px;padding:12px 0;}.report-bar-row span{justify-self:start}.report-bar-track{width:100%;}}
+@media print{#reportsSection{max-width:none!important}.report-dashboard-shell,#reportsSection .section-head{width:100%!important}.report-kpi-grid{grid-template-columns:repeat(2,1fr)!important}.report-grid{grid-template-columns:1fr!important}.report-kpi-card,.report-card{break-inside:avoid;page-break-inside:avoid;background:#fff!important;color:#111!important;border:1px solid #ddd!important}.report-kpi-card *,.report-card *{color:#111!important}.report-bar-fill{background:#111!important}}
+</style>
+
+
+<style id="gg-reports-dashboard-full-fix">
+/* ===== GG TRUE REPORTS BI DASHBOARD — hard UI lock, no plain text fallback ===== */
+#reportsSection{max-width:min(1440px,calc(100vw - 36px))!important;margin:0 auto!important;padding:0 0 38px!important;color:#f7f9ff!important;}
+#reportsSection .section-head{width:100%!important;margin:0 0 18px!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:18px!important;align-items:end!important;text-align:left!important;}
+#reportsSection .section-head h2{font-family:var(--display,Georgia,serif)!important;font-size:clamp(34px,3.4vw,48px)!important;line-height:1!important;margin:0!important;color:#fff!important;text-align:left!important;}
+#reportsSection .section-head p{margin:8px 0 0!important;color:#b7c8e7!important;line-height:1.5!important;font-size:14px!important;max-width:900px!important;}
+#reportsSection .report-export-row{display:flex!important;gap:10px!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:wrap!important;}
+.gg-report-shell{display:grid!important;gap:18px!important;width:100%!important;}
+.gg-report-kpis{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important;}
+.gg-report-card,.gg-report-kpi{background:linear-gradient(180deg,#121927 0%,#080c14 100%)!important;border:1px solid #23324d!important;border-radius:26px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;color:#fff!important;overflow:hidden!important;}
+.gg-report-kpi{min-height:154px!important;padding:20px!important;display:grid!important;align-content:space-between!important;gap:12px!important;cursor:pointer!important;transition:transform .18s ease,border-color .18s ease!important;}
+.gg-report-kpi:hover,.gg-report-card[data-report-card-clickable="true"]:hover{transform:translateY(-2px)!important;border-color:#3d5681!important;}
+.gg-report-kpi .label{font-size:11px!important;letter-spacing:.22em!important;text-transform:uppercase!important;color:#a9bddc!important;font-weight:800!important;}
+.gg-report-kpi .value{font-family:var(--display,Georgia,serif)!important;font-size:clamp(30px,3vw,44px)!important;line-height:1!important;color:#fff!important;}
+.gg-report-kpi .note{font-size:13px!important;line-height:1.45!important;color:#aab8cf!important;}
+.gg-report-grid{display:grid!important;grid-template-columns:1.05fr .95fr!important;gap:18px!important;align-items:start!important;}
+.gg-report-card{padding:22px!important;min-height:280px!important;}
+.gg-report-card.full{grid-column:1/-1!important;min-height:220px!important;}
+.gg-report-card-head{display:flex!important;justify-content:space-between!important;align-items:flex-start!important;gap:14px!important;margin-bottom:18px!important;}
+.gg-report-card h3{margin:0!important;font-size:21px!important;line-height:1.2!important;color:#fff!important;font-weight:900!important;}
+.gg-report-card p{margin:5px 0 0!important;color:#aebddb!important;font-size:13px!important;line-height:1.45!important;}
+.gg-report-chip{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:32px!important;padding:0 12px!important;border-radius:999px!important;border:1px solid rgba(173,204,255,.22)!important;background:rgba(124,170,255,.08)!important;color:#cfe1ff!important;font-size:11px!important;font-weight:900!important;letter-spacing:.12em!important;text-transform:uppercase!important;white-space:nowrap!important;}
+.gg-report-row{display:grid!important;grid-template-columns:minmax(120px,.75fr) minmax(180px,1fr) minmax(95px,max-content)!important;gap:16px!important;align-items:center!important;padding:12px 0!important;border-bottom:1px solid rgba(255,255,255,.07)!important;cursor:pointer!important;}
+.gg-report-row:last-child{border-bottom:none!important;}
+.gg-report-row:hover{background:rgba(255,255,255,.025)!important;border-radius:14px!important;padding-left:10px!important;padding-right:10px!important;}
+.gg-report-row strong{color:#fff!important;font-size:14px!important;line-height:1.25!important;word-break:break-word!important;}
+.gg-report-row span{color:#dbe8ff!important;font-size:14px!important;font-weight:900!important;text-align:right!important;white-space:nowrap!important;}
+.gg-report-track{height:18px!important;border-radius:999px!important;background:#0a1220!important;border:1px solid #263859!important;overflow:hidden!important;}
+.gg-report-fill{height:100%!important;min-width:8px!important;border-radius:999px!important;background:linear-gradient(90deg,#dceaff 0%,#83adff 100%)!important;}
+.gg-report-empty{min-height:130px!important;display:grid!important;place-items:center!important;text-align:center!important;color:#92a1bb!important;border:1px dashed rgba(255,255,255,.12)!important;border-radius:18px!important;background:rgba(255,255,255,.02)!important;padding:18px!important;}
+.gg-report-mini-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important;}
+.gg-report-mini{padding:16px!important;border-radius:20px!important;border:1px solid rgba(255,255,255,.08)!important;background:rgba(255,255,255,.025)!important;}
+.gg-report-mini label{display:block!important;font-size:10px!important;letter-spacing:.18em!important;text-transform:uppercase!important;color:#9eb3d5!important;margin-bottom:8px!important;}
+.gg-report-mini strong{display:block!important;font-family:var(--display,Georgia,serif)!important;font-size:25px!important;color:#fff!important;}
+.gg-report-danger .gg-report-fill{background:linear-gradient(90deg,#ffd9df 0%,#ff6d84 100%)!important;}
+.gg-report-warning .gg-report-fill{background:linear-gradient(90deg,#fff2c5 0%,#ffc861 100%)!important;}
+.gg-report-success .gg-report-fill{background:linear-gradient(90deg,#caffdc 0%,#69f59f 100%)!important;}
+@media(max-width:1100px){.gg-report-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}.gg-report-grid{grid-template-columns:1fr!important}.gg-report-card.full{grid-column:auto!important}#reportsSection .section-head{grid-template-columns:1fr!important}.gg-report-mini-grid{grid-template-columns:1fr!important}}
+@media(max-width:640px){#reportsSection{max-width:min(100vw - 18px,1440px)!important}.gg-report-kpis{grid-template-columns:1fr!important}.gg-report-card,.gg-report-kpi{border-radius:22px!important;padding:18px!important}.gg-report-row{grid-template-columns:1fr!important;gap:8px!important}.gg-report-row span{text-align:left!important}.gg-report-track{width:100%!important}#reportsSection .report-export-row{justify-content:flex-start!important}}
 </style>
 
 </head>
@@ -4484,6 +4563,7 @@ function canonicalCommissionName(value='') {
       inventoryStatus: 'all',
       repairStage: 'all',
       inventoryDate: '',
+      inventoryAgeRange: 'all',
       analyticsSearch: '',
       analyticsWarehouse: 'all',
       analyticsStatus: 'all',
@@ -4691,6 +4771,7 @@ function canonicalCommissionName(value='') {
         const repairStage = String(View.repairStage || 'all').trim().toLowerCase();
         const statusFilter = String(View.inventoryStatus || 'all').trim().toLowerCase();
         const date = String(View.inventoryDate || '').trim();
+        const ageRange = parseInventoryAgeRange(View.inventoryAgeRange || 'all');
         const source = this.unitsByWarehouse(View.warehouse || 'all');
         const filtered = source.filter(x => {
           const hay = [x.brand, x.model, x.plateNumber, x.warehouse, x.supplier, x.chassisNumber, x.engineNumber, x.mvFileNumber, x.firstOwnerName].filter(Boolean).join(' ').toLowerCase();
@@ -4703,9 +4784,11 @@ function canonicalCommissionName(value='') {
           const matchesStatus = statusFilter === 'all' || unitStatus === statusFilter;
           const incomingDate = String(x.incomingDate || x.dateAdded || '').slice(0,10);
           const matchesDate = !date || incomingDate === date;
-          return matchesSearch && matchesBrand && matchesModel && matchesRepairStage && matchesStatus && matchesDate;
+          const ageDays = unitInventoryAgeDays(x);
+          const matchesAge = !ageRange || (ageDays !== null && ageDays >= ageRange.min && ageDays <= ageRange.max);
+          return matchesSearch && matchesBrand && matchesModel && matchesRepairStage && matchesStatus && matchesDate && matchesAge;
         });
-        const hasTightFilters = !!(q || date || brand !== 'all' || model !== 'all' || repairStage !== 'all' || statusFilter !== 'all');
+        const hasTightFilters = !!(q || date || brand !== 'all' || model !== 'all' || repairStage !== 'all' || statusFilter !== 'all' || parseInventoryAgeRange(View.inventoryAgeRange || 'all'));
         if (!filtered.length && source.length && !hasTightFilters) {
           return source;
         }
@@ -5502,7 +5585,8 @@ function canonicalCommissionName(value='') {
       },
 
       inventoryAnalyticsDayCount(unit) {
-        const rawDate = safeSourceTruthDate(unit?.incomingDate || unit?.dateAdded || unit?.createdAt || nowIso());
+        const rawDate = safeSourceTruthDate(unit?.incomingDate || unit?.dateAdded || unit?.createdAt || '');
+        if (!rawDate) return 0;
         const start = new Date(`${rawDate}T00:00:00`);
         const today = new Date(`${currentDateForInput()}T00:00:00`);
         const diff = Math.floor((today.getTime() - start.getTime()) / 86400000);
@@ -7338,6 +7422,45 @@ function canonicalCommissionName(value='') {
       }
     };
 
+
+    function parseInventoryAgeRange(range='all') {
+      const raw = String(range || 'all').trim().toLowerCase();
+      if (!raw || raw === 'all') return null;
+      if (raw === 'over30') return { min:31, max: Infinity };
+      if (raw === 'over60') return { min:61, max: Infinity };
+      if (raw === 'normal') return { min:0, max:20 };
+      if (raw === 'warning') return { min:21, max:40 };
+      if (raw === 'critical') return { min:41, max: Infinity };
+      if (raw.endsWith('+')) return { min: num(raw.replace('+','')), max: Infinity };
+      const match = raw.match(/^(\d+)\s*-\s*(\d+)$/);
+      if (match) return { min:num(match[1]), max:num(match[2]) };
+      return null;
+    }
+
+    function unitInventoryAgeDays(unit) {
+      const rawDate = safeSourceTruthDate(unit?.incomingDate || unit?.dateAdded || unit?.createdAt || '');
+      if (!rawDate) return null;
+      const start = new Date(`${rawDate}T00:00:00`);
+      const today = new Date(`${currentDateForInput()}T00:00:00`);
+      const diff = Math.floor((today.getTime() - start.getTime()) / 86400000);
+      return Number.isFinite(diff) ? Math.max(0, diff) : null;
+    }
+
+    function routeInventoryAnalyticsToSource(kind, payload = {}) {
+      clearInventoryFiltersForSourceSync();
+      const currentWarehouse = String(View.analyticsWarehouse || 'all').trim() || 'all';
+      const currentStatus = String(View.analyticsStatus || 'all').trim() || 'all';
+      syncWarehouseScopes(payload.warehouse || currentWarehouse || 'all');
+      View.inventoryStatus = payload.status || currentStatus || 'all';
+      View.inventoryAgeRange = payload.ageRange || 'all';
+      if (payload.brand) View.inventoryBrand = payload.brand;
+      if (payload.model) View.inventoryModel = payload.model;
+      if (payload.search) View.globalSearch = payload.search;
+      if (kind === 'average') View.inventoryAgeRange = 'all';
+      hydrateInventoryFilters();
+      navigateToDashboardSection('inventory', { closeDrawer:true, render:true, scroll:true });
+    }
+
     function syncWarehouseScopes(nextWarehouse) {
       const normalized = String(nextWarehouse || 'all').trim().toLowerCase() || 'all';
       View.warehouse = normalized;
@@ -7554,6 +7677,7 @@ function canonicalCommissionName(value='') {
       View.inventoryBrand = 'all';
       View.inventoryModel = 'all';
       View.repairStage = 'all';
+      View.inventoryAgeRange = 'all';
     }
 
     function routeToFinancialTab(tabName, options = {}) {
@@ -7957,26 +8081,26 @@ function canonicalCommissionName(value='') {
               </div>
             </div>
             <div class="analytics-summary-grid">
-              <div class="analytics-summary-card">
+              <button class="analytics-summary-card analytics-source-hit" data-analytics-route="total" type="button">
                 <div class="analytics-label">Total Active Units</div>
                 <div class="analytics-value">${summary.total}</div>
-                <div class="analytics-note">Available, reserved, pending, and pending approval units only.</div>
-              </div>
-              <div class="analytics-summary-card">
+                <div class="analytics-note">Click to open Inventory with active-source filters.</div>
+              </button>
+              <button class="analytics-summary-card analytics-source-hit" data-analytics-route="average" type="button">
                 <div class="analytics-label">Average Days in Stock</div>
                 <div class="analytics-value">${summary.average}</div>
-                <div class="analytics-note">Based on each unit’s existing incoming date.</div>
-              </div>
-              <div class="analytics-summary-card">
+                <div class="analytics-note">Click to open Inventory sorted by aging source.</div>
+              </button>
+              <button class="analytics-summary-card analytics-source-hit" data-analytics-route="over30" type="button">
                 <div class="analytics-label">Units Over 30 Days</div>
                 <div class="analytics-value">${summary.over30}</div>
-                <div class="analytics-note">Early aging units that need stronger movement.</div>
-              </div>
-              <div class="analytics-summary-card">
+                <div class="analytics-note">Click to show units aged 31+ days.</div>
+              </button>
+              <button class="analytics-summary-card analytics-source-hit" data-analytics-route="over60" type="button">
                 <div class="analytics-label">Units Over 60 Days</div>
                 <div class="analytics-value">${summary.over60}</div>
-                <div class="analytics-note">Critical aging units that need immediate action.</div>
-              </div>
+                <div class="analytics-note">Click to show units aged 61+ days.</div>
+              </button>
             </div>
             <div class="analytics-toolbar">
               <input class="input" id="analyticsSearchInput" placeholder="Search plate, brand, model, warehouse..." value="${escapeAttr(View.analyticsSearch || '')}" />
@@ -7990,11 +8114,11 @@ function canonicalCommissionName(value='') {
                 <p>10-day stock ranges starting at day 0. This shows where units are sitting too long.</p>
                 <div class="analytics-bar-list">
                   ${bucketRows.map(row => `
-                    <div class="analytics-bar-row">
+                    <button class="analytics-bar-row analytics-bar-hit" data-analytics-age-range="${escapeAttr(row.bucket)}" type="button">
                       <div class="analytics-bar-label">${escapeHtml(row.bucket)} days</div>
                       <div class="analytics-bar-track"><div class="analytics-bar-fill ${escapeAttr(row.severity)}" style="width:${Math.max(6, (row.count / maxBucket) * 100)}%"></div></div>
                       <div class="analytics-bar-value">${row.count}</div>
-                    </div>
+                    </button>
                   `).join('')}
                 </div>
               </div>
@@ -8002,26 +8126,26 @@ function canonicalCommissionName(value='') {
                 <h3>Warehouse and Status Mix</h3>
                 <p>Quick count by warehouse and active status for the currently filtered stock.</p>
                 <div class="analytics-chip-row" style="margin-bottom:14px">
-                  <span class="analytics-chip normal">0–20 Normal</span>
-                  <span class="analytics-chip warning">21–40 Warning</span>
-                  <span class="analytics-chip critical">41+ Critical</span>
+                  <button class="analytics-chip normal analytics-chip-hit" data-analytics-age-range="normal" type="button">0–20 Normal</button>
+                  <button class="analytics-chip warning analytics-chip-hit" data-analytics-age-range="warning" type="button">21–40 Warning</button>
+                  <button class="analytics-chip critical analytics-chip-hit" data-analytics-age-range="critical" type="button">41+ Critical</button>
                 </div>
                 <div class="analytics-bar-list" style="margin-bottom:16px">
                   ${warehouseRows.length ? warehouseRows.map(row => `
-                    <div class="analytics-bar-row">
+                    <button class="analytics-bar-row analytics-bar-hit" data-analytics-warehouse="${escapeAttr(row.label)}" type="button">
                       <div class="analytics-bar-label">${escapeHtml(row.label)}</div>
                       <div class="analytics-bar-track"><div class="analytics-bar-fill" style="width:${Math.max(6, (row.count / maxWarehouse) * 100)}%"></div></div>
                       <div class="analytics-bar-value">${row.count}</div>
-                    </div>
+                    </button>
                   `).join('') : `<div class="analytics-empty">No active units for the current warehouse filters.</div>`}
                 </div>
                 <div class="analytics-bar-list">
                   ${statusRows.length ? statusRows.map(row => `
-                    <div class="analytics-bar-row">
+                    <button class="analytics-bar-row analytics-bar-hit" data-analytics-status="${escapeAttr(row.key)}" type="button">
                       <div class="analytics-bar-label">${escapeHtml(row.label)}</div>
                       <div class="analytics-bar-track"><div class="analytics-bar-fill ${escapeAttr(row.key === 'available' ? 'normal' : (row.key === 'reserved' ? 'warning' : 'critical'))}" style="width:${Math.max(6, (row.count / maxStatus) * 100)}%"></div></div>
                       <div class="analytics-bar-value">${row.count}</div>
-                    </div>
+                    </button>
                   `).join('') : `<div class="analytics-empty">No active statuses found.</div>`}
                 </div>
               </div>
@@ -8346,6 +8470,7 @@ function canonicalCommissionName(value='') {
                     <th>Plate #</th>
                     <th>Motorcycle</th>
                     <th>Buyer</th>
+                    <th>First Owner</th>
                     <th>Amount</th>
                     <th>Actions</th>
                   </tr>
@@ -8358,6 +8483,7 @@ function canonicalCommissionName(value='') {
                     const plate = escapeHtml(x.plateNumber || x.plate || 'No plate');
                     const unitName = escapeHtml(`${x.brand || ''} ${x.model || ''}`.trim() || 'Unknown Unit');
                     const buyer = escapeHtml(sold.buyerName || '—');
+                    const firstOwner = escapeHtml(x.firstOwnerName || sold.firstOwnerName || '—');
                     const amount = peso(sold.finalPrice || 0);
                     return `<tr>
                       <td>${invoice}</td>
@@ -8365,6 +8491,7 @@ function canonicalCommissionName(value='') {
                       <td>${plate}</td>
                       <td>${unitName}</td>
                       <td>${buyer}</td>
+                      <td>${firstOwner}</td>
                       <td>${amount}</td>
                       <td>
                         <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
@@ -8373,7 +8500,7 @@ function canonicalCommissionName(value='') {
                         </div>
                       </td>
                     </tr>`;
-                  }).join('') : `<tr><td colspan="7"><div class="empty">No sold records found for that plate.</div></td></tr>`}
+                  }).join('') : `<tr><td colspan="8"><div class="empty">No sold records found for that plate.</div></td></tr>`}
                 </tbody>
               </table>
             </div>
@@ -8597,7 +8724,7 @@ function canonicalCommissionName(value='') {
           return items.length ? items.map(x => `<div class="report-bar-row"><strong>${escapeHtml(x.label)}</strong><div class="report-bar-track"><div class="report-bar-fill" style="width:${Math.max(3, Math.round((num(x[valueKey])/max)*100))}%"></div></div><span>${escapeHtml(x.display || peso(num(x[valueKey])))}</span></div>`).join('') : `<div class="empty">No report data yet.</div>`;
         };
         byId('reportsSection').innerHTML = `
-          <div class="section-head"><div><h2>Reports Dashboard</h2><p>Monthly sales, profit, AR exposure, inventory movement, and reservation conversion from the single Store source.</p></div><div class="report-export-row"><button class="btn ghost" id="exportReportJsonBtn" type="button">Export Report</button><button class="btn primary" onclick="window.print()" type="button">Print</button></div></div>
+          <div class="section-head"><div><h2>Reports Dashboard</h2><p>Monthly sales, profit, AR exposure, inventory movement, and reservation conversion from the single Store source.</p></div><div class="report-export-row"><button class="btn ghost" data-report-export="json" type="button">Export Report</button><button class="btn primary" onclick="window.print()" type="button">Print</button></div></div>
           <div class="report-dashboard-shell">
             <div class="report-kpi-grid">
               <div class="report-kpi-card"><div class="label">Total Sales</div><div class="value">${peso(summary.sales)}</div><div class="note">Approved sold records only</div></div>
@@ -9698,6 +9825,7 @@ function openQuotationRequest(unitId) {
               <div class="statement-line"><span>Engine No.</span><strong>${escapeHtml(unit.engineNumber || '—')}</strong></div>
               <div class="statement-line"><span>Chassis No.</span><strong>${escapeHtml(unit.chassisNumber || '—')}</strong></div>
               <div class="statement-line"><span>Supplier</span><strong>${escapeHtml(unit.supplier || '—')}</strong></div>
+              <div class="statement-line"><span>First Owner</span><strong>${escapeHtml(unit.firstOwnerName || '—')}</strong></div>
               <div class="statement-line"><span>Images</span><strong>${escapeHtml(String(imageCount))}</strong></div>
               <div class="statement-line"><span>Acquired Date</span><strong>${escapeHtml(unit.acquiredDate ? shortDate(unit.acquiredDate) : '—')}</strong></div>
             </div>
@@ -9720,6 +9848,7 @@ function openQuotationRequest(unitId) {
             <h3>Sale & Buyer Details</h3>
             <div class="statement">
               <div class="statement-line"><span>Buyer</span><strong>${escapeHtml(sold.buyerName || unit.reservedBy?.name || '—')}</strong></div>
+              <div class="statement-line"><span>First Owner</span><strong>${escapeHtml(unit.firstOwnerName || sold.firstOwnerName || '—')}</strong></div>
               <div class="statement-line"><span>Contact</span><strong>${escapeHtml(sold.contactNumber || unit.reservedBy?.contact || '—')}</strong></div>
               <div class="statement-line"><span>Email</span><strong>${escapeHtml(sold.email || '—')}</strong></div>
               <div class="statement-line"><span>Payment Method</span><strong>${escapeHtml(sold.paymentMethod || '—')}</strong></div>
@@ -10923,16 +11052,39 @@ function openQuotationRequest(unitId) {
           return;
         }
 
+
+        const analyticsRoute = e.target.closest('[data-analytics-route]');
+        if (analyticsRoute) {
+          const route = analyticsRoute.getAttribute('data-analytics-route') || 'total';
+          const ageRange = route === 'over30' ? 'over30' : (route === 'over60' ? 'over60' : 'all');
+          routeInventoryAnalyticsToSource(route, { ageRange });
+          return;
+        }
+
+        const analyticsAge = e.target.closest('[data-analytics-age-range]');
+        if (analyticsAge) {
+          routeInventoryAnalyticsToSource('age', { ageRange: analyticsAge.getAttribute('data-analytics-age-range') || 'all' });
+          return;
+        }
+
+        const analyticsWarehouse = e.target.closest('[data-analytics-warehouse]');
+        if (analyticsWarehouse) {
+          routeInventoryAnalyticsToSource('warehouse', { warehouse: String(analyticsWarehouse.getAttribute('data-analytics-warehouse') || 'all').trim().toLowerCase() || 'all' });
+          return;
+        }
+
+        const analyticsStatus = e.target.closest('[data-analytics-status]');
+        if (analyticsStatus) {
+          routeInventoryAnalyticsToSource('status', { status: analyticsStatus.getAttribute('data-analytics-status') || 'all' });
+          return;
+        }
+
         const analyticsHit = e.target.closest('[data-analytics-brand][data-analytics-model]');
         if (analyticsHit) {
-          View.inventoryBrand = analyticsHit.getAttribute('data-analytics-brand') || 'all';
-          View.inventoryModel = analyticsHit.getAttribute('data-analytics-model') || 'all';
-          View.inventoryStatus = 'available';
-          View.inventoryDate = '';
-          View.globalSearch = '';
-          syncWarehouseScopes('all');
-          hydrateInventoryFilters();
-          navigateToDashboardSection('inventory', { closeDrawer:true, render:true, scroll:false });
+          routeInventoryAnalyticsToSource('brand-model', {
+            brand: analyticsHit.getAttribute('data-analytics-brand') || 'all',
+            model: analyticsHit.getAttribute('data-analytics-model') || 'all'
+          });
           return;
         }
 
@@ -11599,7 +11751,9 @@ function openQuotationRequest(unitId) {
         Store.session = null;
         Store.saveSession();
       }
-      const bootRoute = Store.session ? 'dashboard' : 'login';
+      // LANDING ROUTE LOCK: guest/public portal is the default landing page.
+      // Existing valid admin sessions still open the dashboard; logged-out users land on the guest portal, not login.
+      const bootRoute = Store.session ? 'dashboard' : 'public';
       lockMainViews(bootRoute, { loggedIn: !!Store.session });
       UI.route(bootRoute);
       activateDashboardSection(View.tab || 'inventory');
@@ -11607,9 +11761,7 @@ function openQuotationRequest(unitId) {
       if (!Store.session && Services.secureSetupNeeded()) {
         const setupHelp = byId('setupHelp', false);
         if (setupHelp) setupHelp.textContent = 'First-run setup required on this browser. Create your Super Admin, then sign in using that exact username and password.';
-        setTimeout(() => {
-          try { Modal.open('setupModal'); } catch (e) {}
-        }, 0);
+        // Guest portal must remain the landing page. Setup is available from Admin Login, but it no longer auto-covers the public portal.
       }
       renderPhotoPreview();
       renderExpenseEditor();
@@ -12301,7 +12453,7 @@ Proceed to Accounts Receivable now?`,
           Engine.dispatch({ type:'DELETE_USER', userId:deleteUser.getAttribute('data-delete-user') });
           return;
         }
-        const exportReport = event.target && event.target.closest ? event.target.closest('#exportReportJsonBtn') : null;
+        const exportReport = event.target && event.target.closest ? event.target.closest('[data-report-export="json"]') : null;
         if (exportReport) {
           event.preventDefault();
           downloadJsonFile(`jmvs-reports-${new Date().toISOString().slice(0,10)}.json`, { exportedAt:nowIso(), summary:Services.enterpriseReportSummary(), validationIssues:Store.state.validationIssues || [], transactionLocks:Store.state.transactionLocks || [] });
@@ -13268,6 +13420,7 @@ Proceed to Accounts Receivable now?`,
     if (originalRenderTabs) A.UI.renderTabs = function(){ const result = originalRenderTabs(); injectTab(); return result; };
     A.UI.__ideaBoardPremiumPatched = true;
   }
+  window.__GG_BULK_SET_SOURCE_NAME__ = function(name){ state.sourceName = clean(name); };
   document.addEventListener('click', function(e){
     const ideaTab = e.target.closest?.('[data-idea-board-tab],[data-idea-board-mobile]'); if (ideaTab) { e.preventDefault(); open(); return; }
     const section = document.getElementById('ideaBoardSection'); if (!section || !section.contains(e.target)) return;
@@ -13301,338 +13454,565 @@ Proceed to Accounts Receivable now?`,
   window.__GG_CLEAN_BULK_IMPORT_MODULE__ = true;
 
   const TEMPLATE_COLUMNS = [
-    'Brand','Model','Year','Color','Plate Number','Engine Number','Chassis Number','Capital','Selling Price','Mileage','CC','Warehouse','Vendor Source','Status','Date Added','Notes'
+    'UNIT','COLOR','CHASSIS NO','ENGINE NO','PLATE NO','CASA','BUYER','FIRST OWNER','BATCH','RECEIVABLE','DATE SOLD',
+    'ID/DOS with wet sign?','ID & DOS received by client?','On-Hand Orig','ORIG DOCS DATE RECEIVED','Received','DATE RECEIVED BY CLIENT','MODE OF RECEIPT','AGING (IN DAYS)','BRANCH','PLATE STATUS','PLATE RECEIVED BY CLIENT',
+    'CAPITAL','TF','LOGISTICS','OPEX','PMS','WASHING/BUFFING','REPAIRS/PARTS','Labor','COMMISSION','GG Commission fee','TOTAL OPEX','TOTAL COST','DEALER PRICE','SELLING PRICE / INCOM','OTHER OPEX','NET INCOME','STATUS'
   ];
-  const REQUIRED_COLUMNS = ['Brand','Model','Capital'];
-  const state = { rows: [], validRows: [], duplicates: [], errors: [] };
+  const state = { rows: [], validRows: [], duplicates: [], errors: [], warnings: [], skippedGhostRows: 0, totals: {}, fieldChanges: [], headerMap: [], sourceName: '', lastAuditId: '' };
 
   function app(){ return window.GGApp || {}; }
   function store(){ return app().Store || window.Store || null; }
   function engine(){ return app().Engine || window.Engine || null; }
   function ui(){ return app().UI || window.UI || null; }
-  function esc(value){
-    return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
-  }
-  function num(value){
-    const n = Number(String(value ?? '').replace(/[^0-9.-]/g, ''));
-    return Number.isFinite(n) ? Math.max(0, Math.round(n * 100) / 100) : 0;
-  }
+  function services(){ return app().Services || window.Services || null; }
+  function esc(value){ return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch])); }
+  function num(value){ const n = Number(String(value ?? '').replace(/[^0-9.-]/g, '')); return Number.isFinite(n) ? Math.max(0, Math.round(n * 100) / 100) : 0; }
   function clean(value){ return String(value ?? '').trim(); }
   function normalizeKey(value){ return clean(value).toLowerCase().replace(/[^a-z0-9]+/g, ''); }
   function makeId(prefix){ return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`; }
-  function today(){ return new Date().toISOString().slice(0,10); }
-  function normalizeStatus(value){
-    const raw = clean(value).toLowerCase().replace(/\s+/g, '_');
-    return ['available','reserved','pending','pending_approval','sold'].includes(raw) ? raw : 'available';
-  }
-  function titleCase(value){
-    return clean(value).toLowerCase().replace(/\b\w/g, m => m.toUpperCase());
-  }
-  function existingUnits(){
-    const s = store();
-    return Array.isArray(s?.state?.motorcycles) ? s.state.motorcycles : [];
-  }
-  function existingKeys(){
-    const keys = new Set();
-    existingUnits().forEach(unit => {
-      ['plateNumber','engineNumber','chassisNumber'].forEach(field => {
-        const key = normalizeKey(unit?.[field]);
-        if (key) keys.add(`${field}:${key}`);
-      });
+  function nowIso(){ return new Date().toISOString(); }
+  function today(){ return nowIso().slice(0,10); }
+  function titleCase(value){ return clean(value).toLowerCase().replace(/\b\w/g, m => m.toUpperCase()); }
+  function peso(value){ return `₱${num(value).toLocaleString()}`; }
+
+
+  const AUDIT_FIELD_MAP = [
+    ['status','Status'], ['brand','Brand'], ['model','Model'], ['color','Color'], ['warehouse','Warehouse'],
+    ['supplier','Vendor/CASA'], ['firstOwnerName','First Owner'], ['capital','Capital'], ['sellingPrice','Selling Price'],
+    ['dateAdded','Date Added'], ['dateSold','Date Sold'], ['soldTo','Buyer'], ['plateNumber','Plate'], ['engineNumber','Engine'], ['chassisNumber','Chassis'],
+    ['excelFinancials.receivable','AR/Receivable'], ['excelFinancials.pms','PMS'], ['excelFinancials.washingBuffing','Washing/Buffing'],
+    ['excelFinancials.repairsParts','Repairs/Parts'], ['excelFinancials.labor','Labor'], ['excelFinancials.commission','Commission'],
+    ['documentTracking.plateStatus','Plate Status'], ['documentTracking.received','Docs Received'], ['documentTracking.modeOfReceipt','Mode of Receipt']
+  ];
+  function deepClone(value){ try { return JSON.parse(JSON.stringify(value || {})); } catch (_) { return {}; } }
+  function getPath(obj, path){ return String(path).split('.').reduce((acc,key)=>acc && acc[key] !== undefined ? acc[key] : '', obj); }
+  function comparable(value){ if (typeof value === 'number') return String(num(value)); return clean(value); }
+  function describeChange(row, existing, incoming){
+    if (!existing) return [{ row: row.__sourceRow || '—', mode:'New', field:'Unit', before:'—', after:`${incoming.brand || ''} ${incoming.model || ''}`.trim() || incoming.plateNumber || incoming.engineNumber || 'New unit' }];
+    const changes = [];
+    AUDIT_FIELD_MAP.forEach(([path,label]) => {
+      const before = getPath(existing, path);
+      const after = getPath(incoming, path);
+      if (comparable(before) !== comparable(after)) changes.push({ row: row.__sourceRow || '—', mode:'Update', field:label, before: clean(before) || '—', after: clean(after) || '—' });
     });
-    return keys;
+    return changes;
   }
+  function auditStore(){ const Store = store(); if (!Store?.state) return null; Store.state.importAudits = Array.isArray(Store.state.importAudits) ? Store.state.importAudits : []; return Store.state.importAudits; }
+  function pushAuditEntry(entry){ const list = auditStore(); if (!list) return; list.unshift(entry); if (list.length > 25) list.length = 25; }
+  function latestAudit(){ const list = auditStore(); return Array.isArray(list) && list.length ? list[0] : null; }
+  function rollbackLatestImport(){
+    const Store = store(), UI = ui(); const entry = latestAudit();
+    if (!Store?.state || !entry?.beforeState) { alert('No rollback snapshot available.'); return; }
+    if (!confirm(`Rollback import ${entry.id}? This will restore the system state before that Excel import.`)) return;
+    Store.state = deepClone(entry.beforeState);
+    Store.state.importAudits = Array.isArray(entry.beforeState.importAudits) ? entry.beforeState.importAudits : [];
+    Store.state.importAudits.unshift({ id: makeId('rollback'), type:'rollback', date: nowIso(), label:`Rollback restored import ${entry.id}`, restoredImportId: entry.id });
+    try { Store.syncState?.('excel_import_rollback'); Store.save?.(); } catch (_) {}
+    try { UI?.renderAll?.(); UI?.renderFinancialSection?.(); UI?.renderDocumentsSection?.(); UI?.renderSoldSection?.(); } catch (_) {}
+    renderPreview();
+    alert('Rollback completed. System restored to the snapshot before the last Excel import.');
+  }
+
+  function normalizeDate(value){
+    const raw = clean(value);
+    if (!raw) return '';
+    if (/^\d{4}-\d{2}-\d{2}/.test(raw)) return raw.slice(0,10);
+    if (/^\d+(\.\d+)?$/.test(raw)) {
+      const n = Number(raw);
+      if (Number.isFinite(n) && n > 25000 && n < 70000) return new Date(Math.round((n - 25569) * 86400 * 1000)).toISOString().slice(0,10);
+    }
+    const parsed = new Date(raw);
+    return Number.isFinite(parsed.getTime()) ? parsed.toISOString().slice(0,10) : raw;
+  }
+
+  function strictAcquisitionDate(obj){
+    // Unit aging source integrity: only true acquisition/date-added headers may feed Date Added.
+    // Never use Date Sold, document dates, or today's date as a fallback.
+    return normalizeDate(obj['Date Added'] || obj['Date Acquired'] || obj['Acquisition Date'] || obj['Date Purchased'] || obj['Stock Date']);
+  }
+  function strictSoldDate(obj){
+    // Sold timing must only come from real sale/release date headers, not Date Added or today.
+    return normalizeDate(obj['Date Sold'] || obj['Sold Date'] || obj['Release Date'] || obj['Date Released']);
+  }
+
   function canonicalHeader(header){
     const key = normalizeKey(header);
     const map = {
-      brand:'Brand', model:'Model', year:'Year', color:'Color', platenumber:'Plate Number', plate:'Plate Number',
-      enginenumber:'Engine Number', engine:'Engine Number', chassisnumber:'Chassis Number', chassis:'Chassis Number',
-      capital:'Capital', cost:'Capital', sellingprice:'Selling Price', price:'Selling Price', mileage:'Mileage', odo:'Mileage',
-      cc:'CC', warehouse:'Warehouse', location:'Warehouse', vendorsource:'Vendor Source', source:'Vendor Source',
-      status:'Status', dateadded:'Date Added', incomingdate:'Date Added', notes:'Notes', note:'Notes'
+      unit:'Unit', brandmodel:'Unit', brand:'Brand', model:'Model', year:'Year', color:'Color',
+      chassisno:'Chassis Number', chassisnumber:'Chassis Number', chassis:'Chassis Number',
+      engineno:'Engine Number', enginenumber:'Engine Number', engine:'Engine Number', motorno:'Engine Number',
+      plateno:'Plate Number', platenumber:'Plate Number', plate:'Plate Number',
+      casa:'Vendor Source', vendor:'Vendor Source', vendorsource:'Vendor Source', source:'Vendor Source', supplier:'Vendor Source',
+      buyer:'Buyer', client:'Buyer', customer:'Buyer', soldto:'Buyer', firstowner:'First Owner', firstownername:'First Owner', owner:'First Owner', batch:'Batch',
+      receivable:'Receivable', balance:'Receivable', ar:'Receivable',
+      datesold:'Date Sold', solddate:'Date Sold', dateofsale:'Date Sold', releasedate:'Release Date', datereleased:'Release Date',
+      iddoswithwetsign:'ID/DOS Wet Sign', iddoswetsign:'ID/DOS Wet Sign',
+      iddosreceivedbyclient:'ID/DOS Received By Client', idanddosreceivedbyclient:'ID/DOS Received By Client',
+      onhandorig:'On-Hand Orig', originaldocs:'On-Hand Orig', origdocs:'On-Hand Orig',
+      origdocsdatereceived:'Orig Docs Date Received', originaldocsdatereceived:'Orig Docs Date Received',
+      received:'Docs Received Status', datereceivedbyclient:'Date Received By Client', modeofreceipt:'Mode Of Receipt', agingindays:'Aging Days', aging:'Aging Days',
+      branch:'Warehouse', warehouse:'Warehouse', location:'Warehouse',
+      platestatus:'Plate Status', platereceivedbyclient:'Plate Received By Client',
+      capital:'Capital', unitcost:'Capital', unitcosts:'Capital', acquisitioncost:'Capital', cost:'Capital', tf:'TF', transferfee:'TF', logistics:'Logistics', opex:'OPEX',
+      pms:'PMS', washingbuffing:'Washing/Buffing', washing:'Washing/Buffing', buffing:'Washing/Buffing',
+      repairsparts:'Repairs/Parts', repairparts:'Repairs/Parts', repairs:'Repairs/Parts', parts:'Repairs/Parts', labor:'Labor', labour:'Labor',
+      commission:'Commission', ggcommissionfee:'GG Commission Fee', totalopex:'Total OPEX', totalcost:'Total Cost',
+      dealerprice:'Dealer Price', dealer:'Dealer Price', sellingprice:'Selling Price', sellingpriceincom:'Selling Price', sellingpriceincome:'Selling Price', income:'Selling Price', incom:'Selling Price',
+      otheropex:'Other OPEX', netincome:'Net Income', profit:'Net Income', status:'Status', dateadded:'Date Added', incomingdate:'Date Added', dateacquired:'Date Acquired', acquisitiondate:'Acquisition Date', datepurchased:'Date Purchased', stockdate:'Stock Date', notes:'Notes', note:'Notes'
     };
     return map[key] || clean(header);
   }
+
   function parseDelimited(text){
     const input = String(text || '').replace(/^\uFEFF/, '');
     if (!input.trim()) return [];
-    const delimiter = input.includes('\t') && !input.includes(',') ? '\t' : ',';
+    const delimiter = input.includes('\t') ? '\t' : ',';
     const rows = [];
-    let row = [];
-    let value = '';
-    let quoted = false;
+    let row = [], value = '', quoted = false;
     for (let i = 0; i < input.length; i++) {
-      const ch = input[i];
-      const next = input[i + 1];
-      if (ch === '"') {
-        if (quoted && next === '"') { value += '"'; i++; }
-        else quoted = !quoted;
-      } else if (ch === delimiter && !quoted) {
-        row.push(value); value = '';
-      } else if ((ch === '\n' || ch === '\r') && !quoted) {
-        if (ch === '\r' && next === '\n') i++;
-        row.push(value); value = '';
-        if (row.some(cell => String(cell).trim())) rows.push(row);
-        row = [];
-      } else {
-        value += ch;
-      }
+      const ch = input[i], next = input[i + 1];
+      if (ch === '"') { if (quoted && next === '"') { value += '"'; i++; } else quoted = !quoted; }
+      else if (ch === delimiter && !quoted) { row.push(value); value = ''; }
+      else if ((ch === '\n' || ch === '\r') && !quoted) { if (ch === '\r' && next === '\n') i++; row.push(value); value = ''; if (row.some(cell => clean(cell))) rows.push(row); row = []; }
+      else value += ch;
     }
-    row.push(value);
-    if (row.some(cell => String(cell).trim())) rows.push(row);
+    row.push(value); if (row.some(cell => clean(cell))) rows.push(row);
     return rows;
   }
+
   function rowsToObjects(rawRows){
     if (!rawRows.length) return [];
-    const headers = rawRows[0].map(canonicalHeader);
+    const originalHeaders = rawRows[0].map(x => clean(x));
+    const headers = originalHeaders.map(canonicalHeader);
+    state.headerMap = originalHeaders.map((raw, index) => ({ raw, mapped: headers[index], confidence: normalizeKey(raw) === normalizeKey(headers[index]) ? 'direct' : 'mapped' })).filter(x => x.raw);
     return rawRows.slice(1).map((row, rowIndex) => {
-      const obj = { __row: rowIndex + 2 };
-      headers.forEach((header, index) => { obj[header] = clean(row[index]); });
+      const obj = { __row: rowIndex + 2, __raw: {} };
+      headers.forEach((header, index) => { obj[header] = clean(row[index]); obj.__raw[header] = clean(row[index]); });
       return obj;
-    }).filter(obj => Object.values(obj).some(value => clean(value)));
+    }).filter(obj => Object.keys(obj.__raw).some(key => clean(obj.__raw[key])));
   }
-  function detectDuplicate(row, seen, oldKeys){
-    const checks = [
-      ['plateNumber', row.plateNumber],
-      ['engineNumber', row.engineNumber],
-      ['chassisNumber', row.chassisNumber]
-    ].filter(([,value]) => normalizeKey(value));
+
+  function parseUnitName(value){
+    const raw = clean(value);
+    if (!raw) return { brand:'', model:'', year:'' };
+    const parts = raw.split(/\s+/).filter(Boolean);
+    const yearMatch = raw.match(/\b(19|20)\d{2}\b/);
+    const year = yearMatch ? yearMatch[0] : '';
+    const brand = parts[0] || '';
+    let model = parts.slice(1).join(' ');
+    if (year) model = model.replace(new RegExp('\\b' + year + '\\b'), '').replace(/\s+/g, ' ').trim();
+    return { brand, model: model || raw, year };
+  }
+  function normalizeVendorSource(value){
+    const raw = clean(value);
+    if (!raw) return 'SBF';
+    if (/sb\s*finance|\bsbf\b/i.test(raw)) return 'SBF';
+    if (/walk/i.test(raw)) return 'Walk-In Seller';
+    return raw;
+  }
+  function normalizeWarehouse(value){
+    const raw = clean(value);
+    if (!raw) return 'marikina';
+    const lower = raw.toLowerCase();
+    if (lower.includes('antipolo')) return 'antipolo';
+    if (lower.includes('taytay')) return 'taytay';
+    if (lower.includes('binangonan')) return 'binangonan';
+    if (lower.includes('felix')) return 'felix';
+    if (lower.includes('market')) return 'market';
+    if (lower.includes('marikina')) return 'marikina';
+    return lower.replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'') || 'marikina';
+  }
+  function isRealBuyer(value){
+    const buyer = clean(value).toUpperCase();
+    if (!buyer) return false;
+    return !/^(NOT\s*YET\s*SOLD|UNSOLD|AVAILABLE|N\/?A|NA|NONE|-|—)$/i.test(buyer);
+  }
+  function normalizeStatus(value, obj){
+    const raw = clean(value).toLowerCase();
+    // Excel STATUS is the reconciliation source of truth when present.
+    // This lets a returned unit move from Sold back to Available without recreating it.
+    if (/available|avail|returned|return|repossess|repo|back to stock|stock/i.test(raw)) return 'available';
+    if (/reserve/.test(raw)) return 'reserved';
+    if (/pending/.test(raw)) return 'pending';
+    if (/sold|release|dispatch/.test(raw)) return 'sold';
+    // Team Excel rule: SOLD only when there is a real buyer AND a real Date Sold.
+    // Rows marked NOT YET SOLD must stay active even if they came from the sold-monitoring workbook.
+    if (isRealBuyer(obj['Buyer']) && !!strictSoldDate(obj)) return 'sold';
+    return 'available';
+  }
+  function okFlag(value){ return /^(ok|yes|y|received|complete|completed|done|with|on hand|released|dispatch|dispatched)$/i.test(clean(value)); }
+  function existingUnits(){ const s = store(); return Array.isArray(s?.state?.motorcycles) ? s.state.motorcycles : []; }
+  function existingKeys(){
+    const keys = new Set();
+    existingUnits().forEach(unit => {
+      ['plateNumber','engineNumber','chassisNumber'].forEach(field => { const key = normalizeKey(unit?.[field]); if (key) keys.add(`${field}:${key}`); });
+    });
+    return keys;
+  }
+  function existingIdentityIndex(){
+    const map = new Map();
+    existingUnits().forEach(unit => {
+      ['engineNumber','plateNumber','chassisNumber'].forEach(field => {
+        const key = normalizeKey(unit?.[field]);
+        if (key && !map.has(`${field}:${key}`)) map.set(`${field}:${key}`, unit);
+      });
+    });
+    return map;
+  }
+  function identityChecks(row){
+    return [['engineNumber', row.engineNumber], ['plateNumber', row.plateNumber], ['chassisNumber', row.chassisNumber]].filter(([,value]) => normalizeKey(value));
+  }
+  function findExistingUnit(row, index){
+    for (const [field, value] of identityChecks(row)) {
+      const hit = index.get(`${field}:${normalizeKey(value)}`);
+      if (hit) return { unit: hit, field };
+    }
+    return null;
+  }
+  function detectDuplicateInUpload(row, seen, existingMatch){
+    const checks = identityChecks(row);
     for (const [field, value] of checks) {
       const key = `${field}:${normalizeKey(value)}`;
-      if (oldKeys.has(key)) return `Existing ${field.replace('Number',' #')}`;
-      if (seen.has(key)) return `Duplicate in upload (${field.replace('Number',' #')})`;
+      const seenOwner = seen.get(key);
+      if (seenOwner && (!existingMatch || String(seenOwner) !== String(existingMatch.unit?.id))) return `Duplicate in upload (${field.replace('Number',' #')})`;
     }
-    checks.forEach(([field, value]) => seen.add(`${field}:${normalizeKey(value)}`));
+    const ownerId = existingMatch?.unit?.id || row.id;
+    checks.forEach(([field, value]) => seen.set(`${field}:${normalizeKey(value)}`, ownerId));
     return '';
   }
-  function validateObjects(objects){
-    const oldKeys = existingKeys();
-    const seen = new Set();
-    const validRows = [];
-    const errors = [];
-    const duplicates = [];
-    objects.forEach(obj => {
-      const normalized = {
-        id: makeId('unit'),
-        brand: clean(obj['Brand']),
-        model: clean(obj['Model']),
-        year: clean(obj['Year']),
-        color: clean(obj['Color']),
-        plateNumber: clean(obj['Plate Number']),
-        engineNumber: clean(obj['Engine Number']),
-        chassisNumber: clean(obj['Chassis Number']),
-        capital: num(obj['Capital']),
-        sellingPrice: num(obj['Selling Price']),
-        mileage: clean(obj['Mileage']),
-        cc: clean(obj['CC']),
-        warehouse: clean(obj['Warehouse']) || 'marikina',
-        vendorSource: clean(obj['Vendor Source']) || 'SBF',
-        status: normalizeStatus(obj['Status']),
-        dateAdded: clean(obj['Date Added']) || today(),
-        notes: clean(obj['Notes']),
-        images: [],
-        expenses: [],
-        documents: [],
-        repairCosts: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-      const missing = REQUIRED_COLUMNS.filter(col => {
-        if (col === 'Capital') return normalized.capital <= 0;
-        return !clean(obj[col]);
-      });
-      if (missing.length) {
-        errors.push({ row: obj.__row, message: `Missing/invalid: ${missing.join(', ')}` });
-        return;
-      }
-      if (!normalized.sellingPrice) normalized.sellingPrice = normalized.capital;
-      const dupe = detectDuplicate(normalized, seen, oldKeys);
-      if (dupe) {
-        duplicates.push({ row: obj.__row, message: dupe, data: normalized });
-        return;
-      }
-      validRows.push(normalized);
-    });
-    state.rows = objects;
-    state.validRows = validRows;
-    state.errors = errors;
-    state.duplicates = duplicates;
-    renderPreview();
+  function mergeForReconciliation(existing, incoming){
+    if (!existing) return incoming;
+    const previousStatus = clean(existing.status || '');
+    const merged = { ...existing, ...incoming, id: existing.id, createdAt: existing.createdAt || incoming.createdAt || nowIso(), updatedAt: nowIso() };
+    // No-data-delete lock: blank confidential/financial cells in an uploaded team workbook must not erase existing saved values.
+    const blanks = new Set(incoming?.importMeta?.blankFinancialFields || []);
+    const protectTop = { 'Capital':'capital', 'Dealer Price':'dealerPrice', 'Selling Price':'sellingPrice' };
+    Object.entries(protectTop).forEach(([raw, field]) => { if (blanks.has(raw)) merged[field] = existing[field]; });
+    if (existing.excelFinancials || incoming.excelFinancials) {
+      merged.excelFinancials = { ...(existing.excelFinancials || {}), ...(incoming.excelFinancials || {}) };
+      const protectNested = { 'Receivable':'receivable', 'TF':'tf', 'Logistics':'logistics', 'OPEX':'opex', 'PMS':'pms', 'Washing/Buffing':'washingBuffing', 'Repairs/Parts':'repairsParts', 'Labor':'labor', 'Commission':'commission', 'GG Commission Fee':'ggCommissionFee', 'Total OPEX':'totalOpex', 'Total Cost':'totalCost', 'Other OPEX':'otherOpex', 'Net Income':'netIncome' };
+      Object.entries(protectNested).forEach(([raw, field]) => { if (blanks.has(raw)) merged.excelFinancials[field] = existing.excelFinancials?.[field]; });
+    }
+    // Preserve unit aging dates during reconciliation. A blank Excel date must not erase an existing source date.
+    merged.dateAdded = incoming.dateAdded || existing.dateAdded || '';
+    merged.incomingDate = incoming.incomingDate || existing.incomingDate || merged.dateAdded || '';
+    merged.images = Array.isArray(existing.images) && existing.images.length ? existing.images : (incoming.images || []);
+    merged.documents = Array.isArray(existing.documents) && existing.documents.length ? existing.documents : (incoming.documents || []);
+    merged.statusHistory = Array.isArray(existing.statusHistory) ? existing.statusHistory.slice() : [];
+    if (!merged.statusHistory.length) merged.statusHistory.push({ status: previousStatus || incoming.status, date: existing.createdAt || nowIso(), by:'Existing record' });
+    if (previousStatus && previousStatus !== incoming.status) merged.statusHistory.push({ status: incoming.status, date: nowIso(), by:'Excel reconciliation', note:`Status changed from ${previousStatus} to ${incoming.status}` });
+    if (incoming.status !== 'sold') {
+      delete merged.soldData;
+      merged.soldTo = '';
+      merged.dateSold = '';
+    }
+    return merged;
   }
-  function downloadTemplate(){
-    const rows = [
-      TEMPLATE_COLUMNS,
-      ['Honda','Click 125','2025','White','ABC1234','ENG123456','CHS123456','45000','58000','1200','125','Marikina','SBF','Available',today(),'Fresh unit'],
-      ['Yamaha','Mio Gear','2024','Black','XYZ5678','ENG654321','CHS654321','38000','52000','2500','125','Binangonan','Walk-In Seller','Available',today(),'']
-    ];
-    const csv = rows.map(row => row.map(cell => `"${String(cell ?? '').replace(/"/g,'""')}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'GoodGoods_inventory_bulk_upload_template.csv';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 500);
-  }
-  function modalHtml(){
-    return `
-      <div class="modal" id="bulkUploadModal" aria-hidden="true">
-        <div class="modal-card sheet-modal-card gg-bulk-import-card">
-          <div class="modal-head">
-            <div>
-              <h3>Inventory Bulk Upload</h3>
-              <p class="caption">Upload XLSX or paste rows copied from Excel. Preview first, then confirm import.</p>
-            </div>
-            <button class="btn ghost" type="button" data-close-modal="bulkUploadModal">Close</button>
-          </div>
-          <div class="grid-2 gg-bulk-grid">
-            <div class="card">
-              <h3>Template + Upload</h3>
-              <div class="toolbar-group" style="margin-bottom:12px">
-                <button class="btn primary" type="button" id="bulkTemplateBtn">Download XLSX Template</button>
-                <label class="btn ghost" for="bulkCsvInput">Upload XLSX</label>
-                <input id="bulkCsvInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="hidden" />
-              </div>
-              <p class="caption">Upload your Excel .xlsx file or paste copied Excel rows including headers below. Preview first before confirming import.</p>
-              <textarea class="textarea gg-bulk-paste" id="bulkPasteInput" placeholder="Paste copied Excel rows here..."></textarea>
-              <div class="toolbar-group" style="margin-top:10px">
-                <button class="btn success" type="button" id="bulkParsePasteBtn">Preview Pasted Rows</button>
-                <button class="btn ghost" type="button" id="bulkClearBtn">Clear</button>
-              </div>
-            </div>
-            <div class="card">
-              <h3>Import Rules</h3>
-              <div class="statement">
-                <div class="statement-line"><span>Required</span><strong>Brand, Model, Capital</strong></div>
-                <div class="statement-line"><span>Duplicate check</span><strong>Plate / Engine / Chassis</strong></div>
-                <div class="statement-line"><span>Default status</span><strong>Available</strong></div>
-                <div class="statement-line"><span>Sync</span><strong>Inventory + Dashboard + Financial</strong></div>
-              </div>
-            </div>
-          </div>
-          <div class="card gg-bulk-preview-card">
-            <div class="section-head" style="margin-bottom:10px">
-              <div>
-                <h2 style="font-size:22px">Preview</h2>
-                <p id="bulkSummary" class="caption">No rows loaded yet.</p>
-              </div>
-              <button class="btn primary" type="button" id="bulkConfirmBtn" disabled>Confirm Import</button>
-            </div>
-            <div id="bulkPreviewBody" class="table-wrap"><div class="empty">Upload or paste rows to preview.</div></div>
-          </div>
-        </div>
-      </div>`;
-  }
-  function renderPreview(){
-    const body = document.getElementById('bulkPreviewBody');
-    const summary = document.getElementById('bulkSummary');
-    const confirm = document.getElementById('bulkConfirmBtn');
-    if (!body || !summary || !confirm) return;
-    summary.textContent = `${state.validRows.length} ready • ${state.duplicates.length} duplicate(s) • ${state.errors.length} error(s)`;
-    confirm.disabled = state.validRows.length === 0;
-    const issueHtml = [
-      ...state.errors.map(x => `<div class="mini-item"><strong>Row ${esc(x.row)}</strong> — ${esc(x.message)}</div>`),
-      ...state.duplicates.map(x => `<div class="mini-item"><strong>Row ${esc(x.row)}</strong> — ${esc(x.message)}</div>`)
-    ].join('');
-    const rowsHtml = state.validRows.map(row => `
-      <tr>
-        <td>${esc(row.brand)}</td><td>${esc(row.model)}</td><td>${esc(row.year || '—')}</td><td>${esc(row.color || '—')}</td>
-        <td>${esc(row.plateNumber || '—')}</td><td>₱${row.capital.toLocaleString()}</td><td>₱${row.sellingPrice.toLocaleString()}</td><td>${esc(titleCase(row.warehouse))}</td><td>${esc(titleCase(row.status))}</td>
-      </tr>`).join('');
-    body.innerHTML = `
-      ${issueHtml ? `<div class="mini-list" style="margin-bottom:10px">${issueHtml}</div>` : ''}
-      ${rowsHtml ? `<table><thead><tr><th>Brand</th><th>Model</th><th>Year</th><th>Color</th><th>Plate</th><th>Capital</th><th>Selling</th><th>Warehouse</th><th>Status</th></tr></thead><tbody>${rowsHtml}</tbody></table>` : '<div class="empty">No valid rows ready to import.</div>'}`;
-  }
-  function parseText(text){
-    const raw = parseDelimited(text);
-    const objects = rowsToObjects(raw);
-    validateObjects(objects);
-  }
-  function confirmImport(){
-    const Engine = engine();
-    const UI = ui();
-    if (!Engine) { alert('Import engine is not ready. Reload and try again.'); return; }
-    if (!state.validRows.length) { alert('No valid rows to import.'); return; }
-    state.validRows.forEach(unit => Engine.dispatch({ type:'UPSERT_UNIT', payload: unit }));
-    state.rows = []; state.validRows = []; state.errors = []; state.duplicates = [];
-    renderPreview();
-    try { if (UI?.renderAll) UI.renderAll(); } catch (_) {}
-    try { if (window.Modal?.close) window.Modal.close('bulkUploadModal'); } catch (_) { document.getElementById('bulkUploadModal')?.classList.remove('active'); }
-    alert('Bulk upload completed. Imported units were added to Inventory.');
-  }
-  function openModal(){
-    const modal = document.getElementById('bulkUploadModal');
-    if (!modal) return;
-    try { if (window.Modal?.open) window.Modal.open('bulkUploadModal'); else modal.classList.add('active'); } catch (_) { modal.classList.add('active'); }
-    renderPreview();
-  }
-  function installButton(){
-    const addBtn = document.getElementById('addUnitBtn');
-    if (!addBtn || document.getElementById('bulkUploadBtn')) return false;
-    const btn = document.createElement('button');
-    btn.id = 'bulkUploadBtn';
-    btn.className = 'btn ghost';
-    btn.type = 'button';
-    btn.textContent = 'Bulk Upload';
-    addBtn.insertAdjacentElement('afterend', btn);
+  function hasRealCellValue(value){
+    const raw = clean(value);
+    if (!raw) return false;
+    if (/^(n\/a|na|null|none|undefined|-|—)$/i.test(raw)) return false;
     return true;
   }
-  function installModal(){
-    if (document.getElementById('bulkUploadModal')) return;
-    document.body.insertAdjacentHTML('beforeend', modalHtml());
+  function unitExpenseRow(label, amount, date, extra={}){
+    if (!hasRealCellValue(amount)) return null;
+    const parsed = num(amount);
+    if (parsed <= 0) return null;
+    return { id: makeId('exp'), label, amount: parsed, date: date || '', source: 'Excel migration', ...extra };
   }
-  function bind(){
-    document.addEventListener('click', event => {
-      const target = event.target;
-      if (target?.closest?.('#bulkUploadBtn')) openModal();
-      if (target?.closest?.('#bulkTemplateBtn')) downloadTemplate();
-      if (target?.closest?.('#bulkParsePasteBtn')) parseText(document.getElementById('bulkPasteInput')?.value || '');
-      if (target?.closest?.('#bulkClearBtn')) {
-        const paste = document.getElementById('bulkPasteInput'); if (paste) paste.value = '';
-        state.rows = []; state.validRows = []; state.errors = []; state.duplicates = []; renderPreview();
+  function repairRow(label, amount, date){ return null; }
+  function invoiceForRow(obj, unit){
+    const dateSource = strictSoldDate(obj) || strictAcquisitionDate(obj);
+    const date = dateSource ? dateSource.replace(/-/g,'').slice(0,8) : 'HIST';
+    const plate = normalizeKey(unit.plateNumber || unit.engineNumber || unit.chassisNumber).toUpperCase().slice(-5) || String(obj.__row).padStart(3,'0');
+    return `INV-GG-${date}-${plate}`;
+  }
+  function buildSoldData(obj, unit){
+    if (unit.status !== 'sold') return null;
+    if (!isRealBuyer(obj['Buyer']) || !strictSoldDate(obj)) return null;
+    const finalPrice = num(obj['Selling Price']) || num(obj['Dealer Price']) || unit.sellingPrice || unit.capital;
+    const receivable = Math.min(finalPrice, num(obj['Receivable']));
+    const downPayment = Math.max(0, finalPrice - receivable);
+    const dateSold = strictSoldDate(obj);
+    const paymentMethod = receivable > 0 ? 'Partial Payment' : 'Full Payment';
+    return {
+      buyerName: clean(obj['Buyer']) || clean(obj['First Owner']) || 'Historical Buyer',
+      firstOwnerName: clean(obj['First Owner']) || unit.firstOwnerName || '',
+      contactNumber: '', email: '', invoice: invoiceForRow(obj, unit), inclusions: [],
+      finalPrice, dateSold, paymentMethod,
+      agents: [], soldBy: '', assistedBy: '', processedBy:'Excel migration', processedRole:'system', buyerPhone:'',
+      downPayment, receivableBalance: receivable, monthlyDue: receivable > 0 ? receivable : 0, termMonths: receivable > 0 ? 1 : 0,
+      releaseStatus: okFlag(obj['Plate Received By Client']) || okFlag(obj['Date Received By Client']) ? 'released' : 'pending',
+      deliveryStatus: okFlag(obj['Date Received By Client']) ? 'delivered' : 'pending',
+      releasedAt: normalizeDate(obj['Date Received By Client']) || null,
+      deliveredAt: normalizeDate(obj['Date Received By Client']) || null,
+      saleId: unit.id,
+      approvalRequired: receivable > 8000,
+      approvalStatus: receivable > 8000 ? 'approved' : 'not_required',
+      approvedAt: receivable > 8000 ? nowIso() : null,
+      approvedBy: receivable > 8000 ? 'Excel migration' : ''
+    };
+  }
+
+  function normalizeObject(obj){
+    const unitParts = parseUnitName(obj['Unit']);
+    const dateAdded = strictAcquisitionDate(obj);
+    const dateSold = strictSoldDate(obj);
+    const status = normalizeStatus(obj['Status'], obj);
+    const blankFinancialFields = [];
+    ['Capital','Dealer Price','Selling Price','Total Cost','Total OPEX','Net Income','Other OPEX','Receivable','TF','Logistics','OPEX','PMS','Washing/Buffing','Repairs/Parts','Labor','Commission','GG Commission Fee'].forEach(key => { if (!hasRealCellValue(obj[key])) blankFinancialFields.push(key); });
+    const capital = hasRealCellValue(obj['Capital']) ? num(obj['Capital']) : 0;
+    const dealerPrice = hasRealCellValue(obj['Dealer Price']) ? num(obj['Dealer Price']) : 0;
+    const sellingPrice = hasRealCellValue(obj['Selling Price']) ? num(obj['Selling Price']) : (dealerPrice || capital);
+    const repairCosts = [];
+    const expenses = [
+      unitExpenseRow('PMS', obj['PMS'], dateAdded),
+      unitExpenseRow('Washing/Buffing', obj['Washing/Buffing'], dateAdded),
+      unitExpenseRow('Repairs/Parts', obj['Repairs/Parts'], dateAdded),
+      unitExpenseRow('Labor', obj['Labor'], dateAdded),
+      unitExpenseRow('Commission', obj['Commission'], dateAdded)
+    ].filter(Boolean);
+    const unit = {
+      id: makeId('unit'),
+      __sourceRow: obj.__row,
+      brand: clean(obj['Brand']) || unitParts.brand,
+      model: clean(obj['Model']) || unitParts.model,
+      year: clean(obj['Year']) || unitParts.year,
+      color: clean(obj['Color']),
+      plateNumber: clean(obj['Plate Number']).toUpperCase(),
+      engineNumber: clean(obj['Engine Number']),
+      chassisNumber: clean(obj['Chassis Number']),
+      mvFileNumber: '',
+      firstOwnerName: clean(obj['First Owner']),
+      batch: clean(obj['Batch']),
+      capital,
+      dealerPrice: dealerPrice || sellingPrice,
+      sellingPrice,
+      mileage: clean(obj['Mileage']),
+      cc: clean(obj['CC']),
+      warehouse: normalizeWarehouse(obj['Warehouse']),
+      supplier: normalizeVendorSource(obj['Vendor Source']),
+      vendorSource: normalizeVendorSource(obj['Vendor Source']),
+      acquisitionSourceType: /walk/i.test(obj['Vendor Source'] || '') ? 'walk_in' : 'vendor',
+      manualVendorName: normalizeVendorSource(obj['Vendor Source']),
+      status,
+      incomingDate: dateAdded,
+      dateAdded,
+      dateSold,
+      soldTo: clean(obj['Buyer']),
+      expenses,
+      repairCosts,
+      documents: [],
+      papers: {
+        orcr: okFlag(obj['On-Hand Orig']) || okFlag(obj['Orig Docs Date Received']),
+        deed: okFlag(obj['ID/DOS Wet Sign']) || okFlag(obj['ID/DOS Received By Client']),
+        warrantyAck: okFlag(obj['Docs Received Status']) || okFlag(obj['Date Received By Client']),
+        buyerId: okFlag(obj['ID/DOS Received By Client'])
+      },
+      documentTracking: {
+        idDosWetSign: clean(obj['ID/DOS Wet Sign']), idDosReceivedByClient: clean(obj['ID/DOS Received By Client']), onHandOrig: clean(obj['On-Hand Orig']),
+        origDocsDateReceived: normalizeDate(obj['Orig Docs Date Received']), received: clean(obj['Docs Received Status']), dateReceivedByClient: normalizeDate(obj['Date Received By Client']),
+        modeOfReceipt: clean(obj['Mode Of Receipt']), agingDays: num(obj['Aging Days']), plateStatus: clean(obj['Plate Status']), plateReceivedByClient: clean(obj['Plate Received By Client'])
+      },
+      excelFinancials: {
+        receivable:num(obj['Receivable']), tf:num(obj['TF']), logistics:num(obj['Logistics']), opex:num(obj['OPEX']), pms:num(obj['PMS']), washingBuffing:num(obj['Washing/Buffing']), repairsParts:num(obj['Repairs/Parts']), labor:num(obj['Labor']), commission:num(obj['Commission']), ggCommissionFee:num(obj['GG Commission Fee']), totalOpex:num(obj['Total OPEX']), totalCost:num(obj['Total Cost']), dealerPrice, sellingPrice, otherOpex:num(obj['Other OPEX']), netIncome:num(obj['Net Income'])
+      },
+      notes: [clean(obj['Notes']), clean(obj['Buyer']) ? 'Historical buyer: ' + clean(obj['Buyer']) : '', clean(obj['First Owner']) ? 'First owner: ' + clean(obj['First Owner']) : '', clean(obj['Mode Of Receipt']) ? 'Docs receipt mode: ' + clean(obj['Mode Of Receipt']) : '', clean(obj['Plate Status']) ? 'Plate status: ' + clean(obj['Plate Status']) : ''].filter(Boolean).join(' | '),
+      images: [], statusHistory: [{ status, date: nowIso(), by:'Excel migration' }], createdAt: nowIso(), updatedAt: nowIso(),
+      importMeta: { source:'Excel migration', row: obj.__row, importedAt: nowIso(), blankFinancialFields }
+    };
+    unit.soldData = buildSoldData(obj, unit);
+    return unit;
+  }
+
+  function validateObjects(objects){
+    const existingIndex = existingIdentityIndex(), seen = new Map();
+    const validRows = [], errors = [], duplicates = [], warnings = [], fieldChanges = [];
+    let skippedGhostRows = 0, createCount = 0, updateCount = 0, statusReopenCount = 0;
+    objects.forEach(obj => {
+      let unit = normalizeObject(obj);
+      const identityCount = [unit.brand, unit.model, unit.plateNumber, unit.engineNumber, unit.chassisNumber, unit.capital, unit.sellingPrice].filter(Boolean).length;
+      if (identityCount === 0) { skippedGhostRows++; return; }
+      const missing = [];
+      if (!unit.brand && !unit.model) missing.push('UNIT / Brand-Model');
+      if (!unit.plateNumber && !unit.engineNumber) missing.push('Plate or Engine');
+      if (missing.length) { errors.push({ row: obj.__row, message:`Blocked — missing ${missing.join(', ')}` }); return; }
+      if (!unit.plateNumber) warnings.push({ row: obj.__row, message:'Warning — Plate Number missing; Engine/Chassis used as identity.' });
+      if (!unit.engineNumber) warnings.push({ row: obj.__row, message:'Warning — Engine Number missing; Plate/Chassis used as identity.' });
+      if (!unit.chassisNumber) warnings.push({ row: obj.__row, message:'Warning — Chassis Number missing; warning only.' });
+      if (unit.capital <= 0) warnings.push({ row: obj.__row, message:'Warning — Capital missing/zero; unit allowed but financial cost may be incomplete.' });
+      const existingMatch = findExistingUnit(unit, existingIndex);
+      const dupe = detectDuplicateInUpload(unit, seen, existingMatch);
+      if (dupe) { duplicates.push({ row: obj.__row, message:dupe, data:unit }); return; }
+      if (existingMatch) {
+        fieldChanges.push(...describeChange(unit, existingMatch.unit, unit));
+        const wasSold = clean(existingMatch.unit.status).toLowerCase() === 'sold';
+        const nowAvailable = clean(unit.status).toLowerCase() !== 'sold';
+        unit = mergeForReconciliation(existingMatch.unit, unit);
+        unit.__migrationMode = 'update';
+        unit.__matchedBy = existingMatch.field;
+        updateCount++;
+        if (wasSold && nowAvailable) statusReopenCount++;
+        warnings.push({ row: obj.__row, message:`Reconciliation update — matched existing unit by ${existingMatch.field.replace('Number',' #')}; record will be updated, not duplicated.` });
+      } else {
+        fieldChanges.push(...describeChange(unit, null, unit));
+        unit.__migrationMode = 'create';
+        createCount++;
       }
-      if (target?.closest?.('#bulkConfirmBtn')) confirmImport();
+      validRows.push(unit);
     });
-    document.addEventListener('change', event => {
-      const input = event.target;
-      if (!input || input.id !== 'bulkCsvInput') return;
-      const file = input.files && input.files[0];
-      if (!file) return;
-      if (!/\.(csv|txt)$/i.test(file.name)) { alert('Please upload CSV/TXT, or copy rows from Excel and paste them into the import box.'); input.value = ''; return; }
-      const reader = new FileReader();
-      reader.onload = () => parseText(reader.result || '');
-      reader.onerror = () => alert('Could not read the upload file.');
-      reader.readAsText(file);
-      input.value = '';
+    const totals = {
+      inventory: validRows.length,
+      sold: validRows.filter(x => x.status === 'sold' && x.soldData).length,
+      available: validRows.filter(x => x.status !== 'sold').length,
+      ar: validRows.filter(x => num(x.soldData?.receivableBalance) > 0).length,
+      docs: validRows.filter(x => x.documentTracking && Object.values(x.documentTracking).some(Boolean)).length,
+      repairs: validRows.reduce((n,x) => n + (x.repairCosts || []).length, 0),
+      unitExpenses: validRows.reduce((n,x) => n + (x.expenses || []).length, 0),
+      creates: createCount,
+      updates: updateCount,
+      reopened: statusReopenCount
+    };
+    Object.assign(state, { rows:objects, validRows, errors, duplicates, warnings, fieldChanges, skippedGhostRows, totals });
+    renderPreview();
+  }
+
+  function downloadTemplate(){
+    const rows = [TEMPLATE_COLUMNS, ['HONDA CLICK 2025','RED/GRAY','K2VL1214701','JA69E7998244','D7004M','SB FINANCE','JUAN DELA CRUZ','FIRST OWNER','B1','0','2026-05-11','','','OK','2026-05-11','DISPATCHED','2026-05-11','PICKUP','0','MARIKINA','READY','2026-05-11','45000','','','500','550','550','550','550','1000','1000','2200','47200','65000','68000','','20800','SOLD']];
+    const csv = rows.map(row => row.map(cell => `"${String(cell ?? '').replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob); const a = document.createElement('a');
+    a.href = url; a.download = 'GoodGoods_full_migration_mapping_template.csv'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 500);
+  }
+
+  function modalHtml(){ return `
+    <div class="modal" id="bulkUploadModal" aria-hidden="true">
+      <div class="modal-card sheet-modal-card gg-bulk-import-card">
+        <div class="modal-head"><div><h3>GG Full Excel Migration</h3><p class="caption">Upload XLSX or paste rows copied from Excel. The preview reconciles existing units first, then maps Inventory, Sold Records, Financial, AR, Documents, and Vendor Source before import.</p></div><button class="btn ghost" type="button" data-close-modal="bulkUploadModal">Close</button></div>
+        <div class="grid-2 gg-bulk-grid">
+          <div class="card"><h3>Template + Upload</h3><div class="toolbar-group" style="margin-bottom:12px"><button class="btn primary" type="button" id="bulkTemplateBtn">Download Mapping Template</button><label class="btn ghost" for="bulkCsvInput">Upload XLSX</label><input id="bulkCsvInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="hidden" /></div><p class="caption">Supports your headers: UNIT, BUYER, FIRST OWNER, CASA, DEALER PRICE, SELLING PRICE / INCOM, RECEIVABLE, PMS, WASHING/BUFFING, REPAIRS/PARTS, Labor, COMMISSION, docs/plate columns, and STATUS. Expense import only reads real cell values; blanks are ignored.</p><textarea class="textarea gg-bulk-paste" id="bulkPasteInput" placeholder="Paste copied Excel rows here..."></textarea><div class="toolbar-group" style="margin-top:10px"><button class="btn success" type="button" id="bulkParsePasteBtn">Preview Rows</button><button class="btn ghost" type="button" id="bulkClearBtn">Clear</button></div></div>
+          <div class="card"><h3>Migration Rules</h3><div class="statement"><div class="statement-line"><span>Hard block only</span><strong>Missing UNIT and missing both Plate/Engine</strong></div><div class="statement-line"><span>CASA</span><strong>Vendor Source / Supplier</strong></div><div class="statement-line"><span>Sold rows</span><strong>Sold Records + Financial + AR</strong></div><div class="statement-line"><span>Add Unit → Expense Tab</span><strong>Only PMS, Washing/Buffing, Repairs/Parts, Labor, Commission with real cell values</strong></div><div class="statement-line"><span>Reconciliation</span><strong>Engine / Plate / Chassis updates existing units instead of recreating</strong></div><div class="statement-line"><span>Returned unit</span><strong>Excel STATUS Available/Returned moves Sold back to Available</strong></div><div class="statement-line"><span>Docs</span><strong>OR/CR + Plate tracking fields</strong></div><div class="statement-line"><span>Audit + rollback</span><strong>Every confirmed import saves a before-state snapshot and field-level change log</strong></div></div></div>
+        </div>
+        <div class="card gg-bulk-preview-card"><div class="section-head" style="margin-bottom:10px"><div><h2 style="font-size:22px">Safe Migration Preview</h2><p id="bulkSummary" class="caption">No rows loaded yet.</p></div><div class="toolbar-group"><button class="btn ghost" type="button" id="bulkRollbackBtn">Rollback Last Import</button><button class="btn primary" type="button" id="bulkConfirmBtn" disabled>Confirm Migration Import</button></div></div><div id="bulkPreviewBody" class="table-wrap"><div class="empty">Upload or paste rows to preview.</div></div></div>
+      </div>
+    </div>`; }
+
+  function renderPreview(){
+    const body = document.getElementById('bulkPreviewBody'), summary = document.getElementById('bulkSummary'), confirm = document.getElementById('bulkConfirmBtn');
+    if (!body || !summary || !confirm) return;
+    const skipped = Number(state.skippedGhostRows || 0);
+    const canPartialImport = state.validRows.length > 0;
+    const t = state.totals || {};
+    summary.textContent = `${state.validRows.length} valid row(s) ready to reconcile • ${t.creates || 0} new • ${t.updates || 0} updates • ${t.reopened || 0} returned to available • ${t.sold || 0} sold • ${t.available || 0} available • ${t.ar || 0} AR • ${t.docs || 0} docs mapped • ${state.errors.length} blocked row(s) skipped • ${state.duplicates.length} duplicate(s) skipped • ${state.warnings.length} warning(s)`;
+    confirm.disabled = !canPartialImport;
+    confirm.title = canPartialImport ? 'Reconciliation mode: valid rows will create or update by Engine / Plate / Chassis; blocked rows and duplicate upload rows will be skipped.' : 'No valid rows to import.';
+    const headerHtml = (state.headerMap || []).slice(0, 30).map(x => `<span class="extract-pill">${esc(x.raw)} → ${esc(x.mapped)}</span>`).join('');
+    const changeHtml = (state.fieldChanges || []).slice(0, 35).map(x => `<div class="mini-item"><strong>Row ${esc(x.row)}</strong> — ${esc(x.mode)} — ${esc(x.field)}: ${esc(x.before)} → ${esc(x.after)}</div>`).join('');
+    const lastAudit = latestAudit();
+    const auditHtml = lastAudit ? `<div class="mini-item" style="margin-bottom:10px"><strong>Last import audit</strong> — ${esc(lastAudit.id || '—')} · ${esc(lastAudit.date || '—')} · ${esc(lastAudit.summary || '')}</div>` : '';
+    const issueHtml = [...state.errors.map(x => `<div class="mini-item"><strong>Row ${esc(x.row)}</strong> — ${esc(x.message)}</div>`), ...state.duplicates.map(x => `<div class="mini-item"><strong>Row ${esc(x.row)}</strong> — ${esc(x.message)}</div>`), ...state.warnings.slice(0, 25).map(x => `<div class="mini-item"><strong>Row ${esc(x.row)}</strong> — ${esc(x.message)}</div>`)].join('');
+    const expenseAmount = (row, label) => {
+      const wanted = normalizeKey(label);
+      const match = (row.expenses || []).find(x => normalizeKey(x.label) === wanted);
+      return match ? num(match.amount) : 0;
+    };
+    const rowsHtml = state.validRows.slice(0, 100).map(row => {
+      const pms = expenseAmount(row, 'PMS');
+      const washingBuffing = expenseAmount(row, 'Washing/Buffing');
+      const repairsParts = expenseAmount(row, 'Repairs/Parts');
+      const labor = expenseAmount(row, 'Labor');
+      const commission = expenseAmount(row, 'Commission');
+      const expenseTotal = pms + washingBuffing + repairsParts + labor + commission;
+      return `<tr><td>${esc(row.__migrationMode === 'update' ? 'Update' : 'New')}</td><td>${esc(`${row.brand} ${row.model}`.trim())}</td><td>${esc(row.plateNumber || '—')}</td><td>${esc(row.engineNumber || '—')}</td><td>${esc(row.supplier)}</td><td>${esc(titleCase(row.status))}</td><td>${esc(row.soldData?.buyerName || '—')}</td><td>${esc(row.firstOwnerName || row.soldData?.firstOwnerName || '—')}</td><td>${peso(row.capital)}</td><td>${peso(row.soldData?.finalPrice || row.sellingPrice)}</td><td>${peso(row.soldData?.receivableBalance || 0)}</td><td>${peso(pms)}</td><td>${peso(washingBuffing)}</td><td>${peso(repairsParts)}</td><td>${peso(labor)}</td><td>${peso(commission)}</td><td>${peso(expenseTotal)}</td><td>${peso(row.excelFinancials?.otherOpex || 0)}</td><td>${esc(row.documentTracking?.plateStatus || '—')}</td></tr>`;
+    }).join('');
+    body.innerHTML = `
+      ${skipped ? `<div class="mini-item" style="margin-bottom:10px"><strong>Ghost-row protection active</strong> — ${skipped.toLocaleString()} blank/formatted row(s) ignored before unit creation.</div>` : ''}
+      <div class="grid-3" style="margin-bottom:10px"><div class="mini-item"><strong>Reconciliation</strong><br>${t.creates || 0} new · ${t.updates || 0} update(s) · ${t.reopened || 0} returned</div><div class="mini-item"><strong>Sales + AR</strong><br>${t.sold || 0} sold · ${t.available || 0} available · ${t.ar || 0} receivable(s)</div><div class="mini-item"><strong>Financial + Docs</strong><br>${t.unitExpenses || 0} unit expense row(s) · ${t.docs || 0} docs mapped</div></div>
+      ${auditHtml}
+      ${headerHtml ? `<div class="extract-grid" style="margin-bottom:10px">${headerHtml}</div>` : ''}
+      <div class="mini-item" style="margin-bottom:10px"><strong>Expense-cell lock</strong> — Preview now splits Add Unit → Expense Tab into PMS, Washing/Buffing, Repairs/Parts, Labor, Commission, and Expense Total. Only real Excel cell values are shown/imported; blanks stay ₱0 and are not guessed.</div>
+      ${changeHtml ? `<div class="mini-list" style="margin-bottom:10px"><div class="mini-item"><strong>Field Change Preview</strong> — Showing the exact changed fields before import.</div>${changeHtml}${(state.fieldChanges || []).length > 35 ? `<div class="mini-item">+ ${(state.fieldChanges || []).length - 35} more field change(s)</div>` : ''}</div>` : ''}
+      ${issueHtml ? `<div class="mini-list" style="margin-bottom:10px">${issueHtml}${state.warnings.length > 25 ? `<div class="mini-item">+ ${state.warnings.length - 25} more warning(s)</div>` : ''}</div>` : ''}
+      ${rowsHtml ? `<table><thead><tr><th>Mode</th><th>Unit</th><th>Plate</th><th>Engine</th><th>Vendor/CASA</th><th>Status</th><th>Buyer</th><th>First Owner</th><th>Capital</th><th>Selling</th><th>AR</th><th>PMS</th><th>Washing/Buffing</th><th>Repairs/Parts</th><th>Labor</th><th>Commission</th><th>Expense Total</th><th>Other OPEX</th><th>Plate Docs</th></tr></thead><tbody>${rowsHtml}</tbody></table>${state.validRows.length > 100 ? `<p class="caption">Showing first 100 valid rows only. All valid rows will import.</p>` : ''}` : '<div class="empty">No valid rows ready to import.</div>'}`;
+  }
+
+  function parseText(text){ validateObjects(rowsToObjects(parseDelimited(text))); }
+  function closeBulkModal(){
+    const modal = document.getElementById('bulkUploadModal');
+    if (!modal) return;
+    try { if (window.Modal?.close) window.Modal.close('bulkUploadModal'); } catch (_) {}
+    modal.classList.remove('active');
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden','true');
+    document.body.classList.remove('modal-open');
+    document.documentElement.classList.remove('modal-open');
+  }
+
+  function confirmImport(){
+    const Engine = engine(), Store = store(), UI = ui(), Services = services();
+    if (!Store?.state) { alert('Import engine is not ready. Reload and try again.'); return; }
+    if (!state.validRows.length) { alert('No valid rows to import.'); return; }
+    const beforeState = deepClone(Store.state);
+    const auditId = makeId('import');
+    const motorcycles = Array.isArray(Store.state.motorcycles) ? Store.state.motorcycles : (Store.state.motorcycles = []);
+    let imported = 0;
+    const failures = [];
+    state.validRows.forEach(unit => {
+      const payload = { ...unit, importAuditId: auditId, updatedAt: nowIso() };
+      let ok = false;
+      try {
+        if (Engine?.dispatch) ok = Engine.dispatch({ type:'UPSERT_UNIT', payload, render:false }) !== false;
+      } catch (err) {
+        failures.push(`Row ${unit.__sourceRow || '—'} dispatch failed: ${err?.message || err}`);
+      }
+      // Direct safe upsert fallback: keeps the import usable when the delegated Engine action is blocked by a stale listener/modal state.
+      if (!ok) {
+        const ix = motorcycles.findIndex(x => String(x.id) === String(payload.id));
+        if (ix >= 0) motorcycles[ix] = payload;
+        else motorcycles.unshift(payload);
+        ok = true;
+      }
+      if (ok) imported++;
     });
+    if (!imported) { alert('No rows were applied. Please re-open Bulk Upload and try again.'); return; }
+    const result = { ...state.totals, imported, errors: state.errors.length, duplicates: state.duplicates.length, warnings: state.warnings.length, fieldChanges: (state.fieldChanges || []).length, failures };
+    pushAuditEntry({
+      id: auditId,
+      type: 'excel_import',
+      date: nowIso(),
+      sourceName: state.sourceName || 'Pasted/Uploaded Excel',
+      summary: `${imported} applied · ${result.creates || 0} new · ${result.updates || 0} updated · ${result.reopened || 0} returned · ${result.errors || 0} blocked · ${result.duplicates || 0} duplicate skipped`,
+      totals: result,
+      headerMap: deepClone(state.headerMap || []),
+      fieldChanges: deepClone(state.fieldChanges || []),
+      blockedRows: deepClone(state.errors || []),
+      duplicateRows: deepClone(state.duplicates || []),
+      beforeState
+    });
+    try { Store.syncState?.('full_excel_migration_import_audited'); Store.save?.(); } catch (_) {}
+    try { UI?.renderAll?.(); UI?.renderFinancialSection?.(); UI?.renderDocumentsSection?.(); UI?.renderSoldSection?.(); } catch (_) {}
+    state.rows = []; state.validRows = []; state.errors = []; state.duplicates = []; state.warnings = []; state.fieldChanges = []; state.skippedGhostRows = 0; state.totals = {}; state.headerMap = []; state.sourceName = ''; state.lastAuditId = auditId;
+    renderPreview();
+    closeBulkModal();
+    alert(`Excel reconciliation completed. Applied ${imported} valid row(s): ${result.creates || 0} new, ${result.updates || 0} updated, ${result.reopened || 0} returned to available. Skipped ${result.errors || 0} blocked row(s) and ${result.duplicates || 0} duplicate upload row(s). Mapped ${result.sold || 0} sold, ${result.available || 0} available, ${result.ar || 0} AR row(s), and ${result.docs || 0} document mapping(s).`);
   }
-  function install(){
-    installModal();
-    installButton();
-    bind();
-    setTimeout(installButton, 500);
-    setTimeout(installButton, 1500);
-  }
-  const css = `
-    #bulkUploadBtn{margin-left:8px}
-    .gg-bulk-import-card{width:min(1180px,calc(100vw - 24px))!important}
-    .gg-bulk-grid{align-items:stretch}
-    .gg-bulk-paste{min-height:150px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
-    .gg-bulk-preview-card{margin-top:12px}
-    @media (max-width:700px){#bulkUploadBtn{margin-left:0}.inventory-toolbar-group{gap:8px}.gg-bulk-grid{grid-template-columns:1fr!important}.gg-bulk-import-card{padding:14px!important}.gg-bulk-preview-card .section-head{display:grid!important}.gg-bulk-preview-card table{min-width:880px}}
-  `;
-  function installCss(){
-    if (document.getElementById('gg-clean-bulk-import-style')) return;
-    const style = document.createElement('style');
-    style.id = 'gg-clean-bulk-import-style';
-    style.textContent = css;
-    document.head.appendChild(style);
-  }
-  installCss();
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once:true });
-  else install();
+  function openModal(){ const modal = document.getElementById('bulkUploadModal'); if (!modal) return; modal.style.display='flex'; modal.removeAttribute('aria-hidden'); try { if (window.Modal?.open) window.Modal.open('bulkUploadModal'); else modal.classList.add('active'); } catch (_) { modal.classList.add('active'); } modal.classList.add('active'); renderPreview(); }
+  function installButton(){ const addBtn = document.getElementById('addUnitBtn'); if (!addBtn || document.getElementById('bulkUploadBtn')) return false; const btn = document.createElement('button'); btn.id = 'bulkUploadBtn'; btn.className = 'btn ghost'; btn.type = 'button'; btn.textContent = 'Bulk Upload'; addBtn.insertAdjacentElement('afterend', btn); return true; }
+  function ensureModal(){ if (document.getElementById('bulkUploadModal')) return; document.body.insertAdjacentHTML('beforeend', modalHtml()); }
+  function clearAll(){ const paste = document.getElementById('bulkPasteInput'); if (paste) paste.value = ''; Object.assign(state, { rows:[], validRows:[], errors:[], duplicates:[], warnings:[], fieldChanges:[], skippedGhostRows:0, totals:{}, headerMap:[], sourceName:'' }); renderPreview(); }
+  document.addEventListener('click', function(e){
+    const target = e.target;
+    if (target?.closest?.('#bulkUploadBtn')) { e.preventDefault(); ensureModal(); openModal(); return; }
+    if (target?.closest?.('[data-close-modal="bulkUploadModal"]')) { e.preventDefault(); e.stopImmediatePropagation(); closeBulkModal(); return; }
+    if (target?.closest?.('#bulkParsePasteBtn')) { e.preventDefault(); parseText(document.getElementById('bulkPasteInput')?.value || ''); return; }
+    if (target?.closest?.('#bulkConfirmBtn')) { e.preventDefault(); e.stopImmediatePropagation(); confirmImport(); return; }
+    if (target?.closest?.('#bulkRollbackBtn')) { e.preventDefault(); rollbackLatestImport(); return; }
+    if (target?.closest?.('#bulkClearBtn')) { e.preventDefault(); clearAll(); return; }
+    if (target?.closest?.('#bulkTemplateBtn')) { e.preventDefault(); downloadTemplate(); return; }
+  }, true);
+  document.addEventListener('DOMContentLoaded', () => { installButton(); ensureModal(); });
+  const timer = setInterval(() => { installButton(); ensureModal(); }, 800);
+  setTimeout(() => { installButton(); ensureModal(); }, 200);
 })();
 </script>
 
@@ -13677,12 +14057,42 @@ Proceed to Accounts Receivable now?`,
   function clean(value){ return String(value ?? '').trim(); }
   function canonicalHeader(header){
     const key = clean(header).toLowerCase().replace(/[^a-z0-9]+/g, '');
-    const map = { brand:'Brand', model:'Model', year:'Year', color:'Color', platenumber:'Plate Number', plate:'Plate Number', enginenumber:'Engine Number', engine:'Engine Number', chassisnumber:'Chassis Number', chassis:'Chassis Number', capital:'Capital', cost:'Capital', sellingprice:'Selling Price', price:'Selling Price', mileage:'Mileage', odo:'Mileage', cc:'CC', warehouse:'Warehouse', location:'Warehouse', vendorsource:'Vendor Source', source:'Vendor Source', status:'Status', dateadded:'Date Added', incomingdate:'Date Added', notes:'Notes', note:'Notes' };
+    const map = {
+      unit:'Unit', brandmodel:'Unit', brand:'Brand', model:'Model', year:'Year', color:'Color',
+      platenumber:'Plate Number', plateno:'Plate Number', plate:'Plate Number', enginenumber:'Engine Number', engineno:'Engine Number', engine:'Engine Number', chassisnumber:'Chassis Number', chassisno:'Chassis Number', chassis:'Chassis Number',
+      casa:'Vendor Source', vendorsource:'Vendor Source', source:'Vendor Source', vendor:'Vendor Source', supplier:'Vendor Source',
+      buyer:'Buyer', client:'Buyer', customer:'Buyer', soldto:'Buyer', firstowner:'First Owner', firstownername:'First Owner', batch:'Batch',
+      receivable:'Receivable', balance:'Receivable', ar:'Receivable', datesold:'Date Sold', solddate:'Date Sold', dateofsale:'Date Sold', releasedate:'Release Date', datereleased:'Release Date',
+      iddoswithwetsign:'ID/DOS Wet Sign', iddoswetsign:'ID/DOS Wet Sign', iddosreceivedbyclient:'ID/DOS Received By Client', idanddosreceivedbyclient:'ID/DOS Received By Client',
+      onhandorig:'On-Hand Orig', originaldocs:'On-Hand Orig', origdocs:'On-Hand Orig', origdocsdatereceived:'Orig Docs Date Received', originaldocsdatereceived:'Orig Docs Date Received', received:'Docs Received Status', datereceivedbyclient:'Date Received By Client', modeofreceipt:'Mode Of Receipt', agingindays:'Aging Days', aging:'Aging Days', branch:'Warehouse', warehouse:'Warehouse', location:'Warehouse', platestatus:'Plate Status', platereceivedbyclient:'Plate Received By Client',
+      capital:'Capital', unitcost:'Capital', unitcosts:'Capital', cost:'Capital', acquisitioncost:'Capital', tf:'TF', transferfee:'TF', logistics:'Logistics', opex:'OPEX', pms:'PMS', washingbuffing:'Washing/Buffing', washing:'Washing/Buffing', buffing:'Washing/Buffing', repairsparts:'Repairs/Parts', repairparts:'Repairs/Parts', repairs:'Repairs/Parts', parts:'Repairs/Parts', labor:'Labor', labour:'Labor',
+      commission:'Commission', ggcommissionfee:'GG Commission Fee', totalopex:'Total OPEX', totalcost:'Total Cost', dealerprice:'Dealer Price', dealer:'Dealer Price', sellingprice:'Selling Price', sellingpriceincom:'Selling Price', sellingpriceincome:'Selling Price', income:'Selling Price', incom:'Selling Price', otheropex:'Other OPEX', netincome:'Net Income', status:'Status', dateadded:'Date Added', incomingdate:'Date Added', dateacquired:'Date Acquired', acquisitiondate:'Acquisition Date', datepurchased:'Date Purchased', stockdate:'Stock Date', notes:'Notes', note:'Notes'
+    };
     return map[key] || clean(header);
   }
   function xmlDoc(text){ return new DOMParser().parseFromString(text, 'application/xml'); }
   function cellColumn(ref){ const letters = String(ref || '').replace(/[^A-Z]/gi,'').toUpperCase(); let n=0; for (const ch of letters) n = n*26 + ch.charCodeAt(0)-64; return Math.max(0,n-1); }
   function dateSerialToISO(value){ const n = Number(value); if (!Number.isFinite(n) || n <= 0) return String(value || ''); const ms = Math.round((n - 25569) * 86400 * 1000); return new Date(ms).toISOString().slice(0,10); }
+  function isFormulaOnlyBlankCell(c){
+    const hasFormula = !!c.getElementsByTagName('f')[0];
+    const v = c.getElementsByTagName('v')[0];
+    const inlineText = Array.from(c.getElementsByTagName('t')).map(t => t.textContent || '').join('');
+    return hasFormula && !clean(v ? v.textContent || '' : '') && !clean(inlineText);
+  }
+  function rowMeaningfulValueCount(row){
+    return row.reduce((count, cell) => count + (clean(cell) ? 1 : 0), 0);
+  }
+  function findHeaderIndex(rows){
+    const requiredSignals = ['Unit','Brand','Model','Plate Number','Engine Number','Capital'];
+    let best = -1;
+    let bestScore = 0;
+    rows.slice(0, Math.min(rows.length, 80)).forEach((row, idx) => {
+      const headers = row.map(canonicalHeader);
+      const score = requiredSignals.reduce((n, h) => n + (headers.includes(h) ? 1 : 0), 0);
+      if (score > bestScore) { bestScore = score; best = idx; }
+    });
+    return bestScore >= 2 ? best : 0;
+  }
   async function parseXlsxToRows(file){
     const zip = await unzipXlsx(await file.arrayBuffer());
     const sheetKeys = Object.keys(zip).filter(k => /^xl\/worksheets\/sheet\d+\.xml$/i.test(k)).sort();
@@ -13693,23 +14103,45 @@ Proceed to Accounts Receivable now?`,
       const ssDoc = xmlDoc(zip['xl/sharedStrings.xml']);
       Array.from(ssDoc.getElementsByTagName('si')).forEach(si => shared.push(Array.from(si.getElementsByTagName('t')).map(t => t.textContent || '').join('')));
     }
-    const doc = xmlDoc(sheetXml); const rows = [];
+    const doc = xmlDoc(sheetXml);
+    const rawRows = [];
+    let consecutiveEmpty = 0;
+    const EMPTY_STOP_LIMIT = 50;
     Array.from(doc.getElementsByTagName('row')).forEach(rowEl => {
+      if (consecutiveEmpty >= EMPTY_STOP_LIMIT) return;
       const row = [];
+      let realCellCount = 0;
       Array.from(rowEl.getElementsByTagName('c')).forEach(c => {
-        const idx = cellColumn(c.getAttribute('r')); const type = c.getAttribute('t'); let value = '';
+        if (isFormulaOnlyBlankCell(c)) return;
+        const idx = cellColumn(c.getAttribute('r'));
+        const type = c.getAttribute('t');
+        let value = '';
         if (type === 'inlineStr') value = Array.from(c.getElementsByTagName('t')).map(t => t.textContent || '').join('');
-        else { const v = c.getElementsByTagName('v')[0]; value = v ? v.textContent || '' : ''; if (type === 's') value = shared[Number(value)] || ''; }
+        else {
+          const v = c.getElementsByTagName('v')[0];
+          value = v ? v.textContent || '' : '';
+          if (type === 's') value = shared[Number(value)] || '';
+        }
+        if (clean(value)) realCellCount++;
         row[idx] = value;
       });
-      if (row.some(x => clean(x))) rows.push(row.map(x => x ?? ''));
+      const values = row.map(x => x ?? '');
+      if (realCellCount === 0 || rowMeaningfulValueCount(values) === 0) {
+        consecutiveEmpty++;
+        return;
+      }
+      consecutiveEmpty = 0;
+      rawRows.push(values);
     });
-    if (rows.length) {
-      const headers = rows[0].map(canonicalHeader);
-      rows[0] = headers;
-      const dateIndex = headers.indexOf('Date Added');
-      if (dateIndex >= 0) rows.slice(1).forEach(r => { if (/^\d+(\.\d+)?$/.test(String(r[dateIndex] || ''))) r[dateIndex] = dateSerialToISO(r[dateIndex]); });
-    }
+    if (!rawRows.length) return [];
+    const headerIndex = findHeaderIndex(rawRows);
+    const rows = rawRows.slice(headerIndex);
+    const headers = rows[0].map(canonicalHeader);
+    rows[0] = headers;
+    const dateHeaders = ['Date Added','Date Acquired','Acquisition Date','Date Purchased','Stock Date','Date Sold','Sold Date','Release Date','Date Released','Orig Docs Date Received','Date Received By Client','Plate Received By Client'];
+    headers.forEach((header, idx) => {
+      if (dateHeaders.includes(header)) rows.slice(1).forEach(r => { if (/^\d+(\.\d+)?$/.test(String(r[idx] || ''))) r[idx] = dateSerialToISO(r[idx]); });
+    });
     return rows;
   }
   function rowsToTsv(rows){
@@ -13722,13 +14154,13 @@ Proceed to Accounts Receivable now?`,
     const input = document.getElementById('bulkCsvInput'); if (input) input.accept = '.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     const label = modal.querySelector('label[for="bulkCsvInput"]'); if (label) label.textContent = 'Upload XLSX';
     const rules = Array.from(modal.querySelectorAll('.statement-line'));
-    rules.forEach(line => { if (/Default status/i.test(line.textContent)) line.innerHTML = '<span>File type</span><strong>.xlsx Excel workbook</strong>'; });
+    rules.forEach(line => { if (/Default status/i.test(line.textContent)) line.innerHTML = '<span>File type</span><strong>.xlsx Excel workbook</strong>'; if (/Required/i.test(line.textContent)) line.innerHTML = '<span>Required</span><strong>UNIT or Brand/Model plus Plate or Engine. Expenses only import from real PMS/Washing/Repairs/Labor/Commission cells.</strong>'; });
   }
   async function handleXlsxUpload(input){
     const file = input.files && input.files[0]; if (!file) return;
     if (!/\.xlsx$/i.test(file.name)) { alert('Please upload an .xlsx Excel workbook.'); input.value = ''; return; }
     const summary = document.getElementById('bulkSummary'); const body = document.getElementById('bulkPreviewBody');
-    if (summary) summary.textContent = 'Reading XLSX workbook...';
+    if (summary) summary.textContent = 'Reading XLSX workbook...'; try { window.__GG_LAST_XLSX_SOURCE_NAME__ = file.name || ''; } catch (_) {}
     if (body) body.innerHTML = '<div class="empty">Reading XLSX workbook. Please wait.</div>';
     try {
       const rows = await parseXlsxToRows(file);
@@ -13786,6 +14218,681 @@ Proceed to Accounts Receivable now?`,
   setTimeout(ensureBulkButton, 100);
   setTimeout(ensureBulkButton, 800);
 })();
+</script>
+
+
+<script id="gg-true-reports-bi-dashboard-fix">
+(function(){
+  'use strict';
+  if (window.__GG_TRUE_REPORTS_BI_FIX__) return;
+  window.__GG_TRUE_REPORTS_BI_FIX__ = true;
+  const money = (value) => '₱' + Math.round(Number(value || 0)).toLocaleString('en-PH');
+  const n = (value) => Number(String(value ?? '').replace(/[^0-9.-]/g,'')) || 0;
+  const esc = (value) => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+  const clean = (value) => String(value ?? '').trim();
+  const statusOf = (unit) => clean(unit?.status || '').toLowerCase();
+  const isSold = (unit) => statusOf(unit) === 'sold';
+  const activeUnit = (unit) => !['sold','archived'].includes(statusOf(unit));
+  const first = (...values) => values.map(clean).find(Boolean) || '';
+  const deriveBrandModel = (unit, sale) => {
+    const unitText = first(unit?.unit, unit?.unitName, sale?.unit, sale?.unitName, unit?.brandModel, sale?.brandModel);
+    let brand = first(unit?.brand, sale?.brand);
+    let model = first(unit?.model, sale?.model);
+    if ((!brand || !model) && unitText) {
+      const parts = unitText.split(/\s+/).filter(Boolean);
+      if (!brand && parts[0]) brand = parts[0];
+      if (!model && parts.length > 1) model = parts.slice(1).join(' ');
+    }
+    return { brand: brand || 'Unmapped Brand', model: model || 'Unmapped Model' };
+  };
+  const daysInStock = (unit) => {
+    const date = first(unit?.dateAdded, unit?.dateAcquired, unit?.acquisitionDate, unit?.stockDate, unit?.datePurchased);
+    if (!date) return null;
+    const t = new Date(date).getTime();
+    if (!Number.isFinite(t)) return null;
+    return Math.max(0, Math.floor((Date.now() - t) / 86400000));
+  };
+  const saleAmount = (sale, unit) => n(sale?.finalPrice || sale?.sellingPrice || sale?.selling || unit?.soldData?.finalPrice || unit?.sellingPrice || unit?.selling);
+  const profitAmount = (sale, unit) => {
+    const saleProfit = n(sale?.netProfit);
+    if (saleProfit) return saleProfit;
+    const selling = saleAmount(sale, unit);
+    const capital = n(unit?.capital || unit?.cost || sale?.capital);
+    const expenses = n(unit?.expenses?.pms) + n(unit?.expenses?.washingBuffing) + n(unit?.expenses?.washing) + n(unit?.expenses?.repairsParts) + n(unit?.expenses?.repairs) + n(unit?.expenses?.labor) + n(unit?.expenses?.commission) + n(unit?.expensePms) + n(unit?.expenseWashingBuffing) + n(unit?.expenseRepairsParts) + n(unit?.expenseLabor) + n(unit?.commission);
+    return selling - capital - expenses;
+  };
+  function buildSummary(){
+    const state = window.Store?.state || {};
+    const units = Array.isArray(state.motorcycles) ? state.motorcycles : [];
+    const salesRaw = Array.isArray(state.sales) ? state.sales : [];
+    const unitById = new Map(units.map(u => [String(u?.id || ''), u]));
+    const soldUnits = units.filter(isSold);
+    const sales = salesRaw.length ? salesRaw.map(s => ({ sale:s, unit:unitById.get(String(s?.unitId || s?.motorcycleId || '')) || soldUnits.find(u => String(u?.soldData?.saleId || u?.soldData?.id || '') === String(s?.id || '')) || null })) : soldUnits.map(u => ({ sale:u.soldData || {}, unit:u }));
+    const totalSales = sales.reduce((a,x)=>a+saleAmount(x.sale,x.unit),0);
+    const netProfit = sales.reduce((a,x)=>a+profitAmount(x.sale,x.unit),0);
+    const ar = (window.Services?.receivables ? window.Services.receivables('all') : []).reduce((a,x)=>a+n(x?.balance),0);
+    const liveStock = units.filter(activeUnit).length;
+    const invValue = units.filter(activeUnit).reduce((a,u)=>a+n(u?.capital || u?.cost)+n(u?.expenses?.pms)+n(u?.expenses?.washingBuffing)+n(u?.expenses?.washing)+n(u?.expenses?.repairsParts)+n(u?.expenses?.repairs)+n(u?.expenses?.labor)+n(u?.expensePms)+n(u?.expenseWashingBuffing)+n(u?.expenseRepairsParts)+n(u?.expenseLabor),0);
+    const brandMap = new Map();
+    const modelMap = new Map();
+    const monthMap = new Map();
+    sales.forEach(({sale,unit}) => {
+      const amount = saleAmount(sale, unit);
+      const profit = profitAmount(sale, unit);
+      const bm = deriveBrandModel(unit || {}, sale || {});
+      brandMap.set(bm.brand, (brandMap.get(bm.brand) || 0) + amount);
+      const modelKey = `${bm.brand} ${bm.model}`.trim();
+      modelMap.set(modelKey, (modelMap.get(modelKey) || 0) + profit);
+      const date = first(sale?.dateSold, sale?.soldDate, sale?.date, unit?.soldData?.dateSold, unit?.soldDate);
+      const key = date ? String(date).slice(0,7) : 'No Date';
+      monthMap.set(key, (monthMap.get(key) || 0) + profit);
+    });
+    const bucketDefs = [
+      {label:'0-10 days',min:0,max:10,cls:'gg-report-success'},
+      {label:'11-30 days',min:11,max:30,cls:'gg-report-success'},
+      {label:'31-60 days',min:31,max:60,cls:'gg-report-warning'},
+      {label:'61-90 days',min:61,max:90,cls:'gg-report-danger'},
+      {label:'91+ days',min:91,max:99999,cls:'gg-report-danger'}
+    ];
+    const active = units.filter(activeUnit);
+    const aging = bucketDefs.map(b => ({...b,count:active.filter(u => { const d = daysInStock(u); return d !== null && d >= b.min && d <= b.max; }).length}));
+    const noDateCount = active.filter(u => daysInStock(u) === null).length;
+    const reservations = Array.isArray(state.reservationRequests) ? state.reservationRequests : [];
+    const reservationMap = new Map();
+    reservations.forEach(r => { const key = first(r?.status, 'Pending'); reservationMap.set(key, (reservationMap.get(key) || 0) + 1); });
+    return {
+      totalSales, netProfit, ar, liveStock, invValue, soldCount:soldUnits.length,
+      brands:[...brandMap.entries()].sort((a,b)=>b[1]-a[1]).slice(0,8).map(([label,value])=>({label,value,display:money(value)})),
+      monthly:[...monthMap.entries()].sort((a,b)=>String(a[0]).localeCompare(String(b[0]))).slice(-12).map(([label,value])=>({label,value,display:money(value)})),
+      models:[...modelMap.entries()].sort((a,b)=>b[1]-a[1]).slice(0,8).map(([label,value])=>({label,value,display:money(value)})),
+      aging, noDateCount,
+      reservations:[...reservationMap.entries()].map(([label,count])=>({label,count,display:String(count)}))
+    };
+  }
+  function rows(items, opts={}){
+    const list = Array.isArray(items) ? items : [];
+    if (!list.length) return '<div class="gg-report-empty">No report data yet. Import or add source records first.</div>';
+    const key = opts.key || 'value';
+    const max = Math.max(1, ...list.map(x => n(x[key])));
+    return list.map(x => {
+      const value = n(x[key]);
+      const pct = Math.max(value ? 4 : 0, Math.round((value / max) * 100));
+      const cls = x.cls || '';
+      const jump = opts.jump ? ` data-report-jump="${esc(opts.jump)}" data-report-label="${esc(x.label)}"` : '';
+      return `<button class="gg-report-row ${esc(cls)}" type="button"${jump}><strong>${esc(x.label)}</strong><div class="gg-report-track"><div class="gg-report-fill" style="width:${pct}%"></div></div><span>${esc(x.display ?? value)}</span></button>`;
+    }).join('');
+  }
+  function patch(){
+    const UI = window.UI;
+    if (!UI || !window.Services) return false;
+    window.Services.enterpriseReportSummary = buildSummary;
+    UI.renderReportsSection = function(){
+      const s = buildSummary();
+      const target = document.getElementById('reportsSection');
+      if (!target) return;
+      target.innerHTML = `
+        <div class="section-head">
+          <div><h2>Reports Dashboard</h2><p>Business intelligence from one source of truth: sold units, inventory, AR, expenses, documents, and warehouse movement. Every card routes back to its source.</p></div>
+          <div class="report-export-row"><button class="btn ghost" data-report-export="json" type="button">Export Report</button><button class="btn primary" onclick="window.print()" type="button">Print</button></div>
+        </div>
+        <div class="gg-report-shell">
+          <div class="gg-report-kpis">
+            <button class="gg-report-kpi" type="button" data-jump-tab="sold"><div class="label">Total Sales</div><div class="value">${money(s.totalSales)}</div><div class="note">Approved sold records only • ${s.soldCount} sold unit(s)</div></button>
+            <button class="gg-report-kpi" type="button" data-jump-tab="financial" data-jump-filter="income"><div class="label">Net Profit</div><div class="value">${money(s.netProfit)}</div><div class="note">Selling less capital, unit expenses, repairs, and commission</div></button>
+            <button class="gg-report-kpi" type="button" data-jump-tab="financial" data-jump-filter="ar"><div class="label">Open AR</div><div class="value">${money(s.ar)}</div><div class="note">Remaining receivable balance from sales source</div></button>
+            <button class="gg-report-kpi" type="button" data-jump-tab="inventory"><div class="label">Live Stock Value</div><div class="value">${money(s.invValue)}</div><div class="note">${s.liveStock} active unit(s), excluding sold/archived</div></button>
+          </div>
+          <div class="gg-report-grid">
+            <div class="gg-report-card" data-report-card-clickable="true"><div class="gg-report-card-head"><div><h3>Sales by Brand</h3><p>Total selling amount grouped by actual imported unit brand.</p></div><span class="gg-report-chip">Sold Source</span></div>${rows(s.brands,{jump:'sold-brand'})}</div>
+            <div class="gg-report-card"><div class="gg-report-card-head"><div><h3>Monthly Net Profit</h3><p>Profit trend from sold records. No duplicate report dataset.</p></div><span class="gg-report-chip">Financial</span></div>${rows(s.monthly)}</div>
+            <div class="gg-report-card"><div class="gg-report-card-head"><div><h3>Inventory Aging</h3><p>Active units only. Units without acquisition date are listed separately.</p></div><span class="gg-report-chip">Inventory</span></div>${rows(s.aging,{key:'count',jump:'aging'})}${s.noDateCount ? `<button class="gg-report-row" type="button" data-jump-tab="inventory"><strong>No acquisition date</strong><div class="gg-report-track"><div class="gg-report-fill" style="width:100%"></div></div><span>${s.noDateCount}</span></button>` : ''}</div>
+            <div class="gg-report-card"><div class="gg-report-card-head"><div><h3>Most Profitable Models</h3><p>Net profit grouped by brand/model to guide future buying.</p></div><span class="gg-report-chip">Decision</span></div>${rows(s.models)}</div>
+            <div class="gg-report-card full"><div class="gg-report-card-head"><div><h3>Source Integrity Snapshot</h3><p>Quick check of what the reports are reading right now.</p></div><span class="gg-report-chip">One Source</span></div><div class="gg-report-mini-grid"><div class="gg-report-mini"><label>Sold Units</label><strong>${s.soldCount}</strong></div><div class="gg-report-mini"><label>Active Units</label><strong>${s.liveStock}</strong></div><div class="gg-report-mini"><label>Open AR</label><strong>${money(s.ar)}</strong></div></div></div>
+          </div>
+        </div>`;
+    };
+    return true;
+  }
+  document.addEventListener('click', function(e){
+    const row = e.target && e.target.closest && e.target.closest('[data-report-jump]');
+    if (!row) return;
+    const type = row.getAttribute('data-report-jump') || '';
+    if (type === 'aging') {
+      const label = row.getAttribute('data-report-label') || '';
+      const m = label.match(/(\d+)\s*-\s*(\d+)|^(\d+)\+/);
+      if (window.routeInventoryAnalyticsToSource && m) {
+        const range = m[3] ? `${m[3]}-99999` : `${m[1]}-${m[2]}`;
+        window.routeInventoryAnalyticsToSource('age', { ageRange: range });
+      } else {
+        document.querySelector('[data-jump-tab="inventory"]')?.click();
+      }
+    } else if (type === 'sold-brand') {
+      document.querySelector('[data-tab="sold"]')?.click();
+    }
+  }, true);
+  if (!patch()) document.addEventListener('DOMContentLoaded', patch);
+  setTimeout(function(){ if (patch() && window.View?.tab === 'reports') window.UI?.renderReportsSection?.(); }, 300);
+})();
+</script>
+
+
+
+<style id="gg-reports-dashboard-final-lock">
+/* ===== GG Reports Dashboard Final Lock — real boxed BI layout ===== */
+#reportsSection{max-width:min(1440px,calc(100vw - 36px))!important;margin:0 auto!important;padding:0 0 42px!important;color:#f8fbff!important;}
+#reportsSection .section-head{width:100%!important;margin:0 0 18px!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:18px!important;align-items:end!important;text-align:left!important;}
+#reportsSection .section-head h2{font-family:var(--display,Georgia,serif)!important;font-size:clamp(34px,3.5vw,50px)!important;line-height:1!important;margin:0!important;color:#fff!important;}
+#reportsSection .section-head p{margin:8px 0 0!important;color:#bcd0ef!important;line-height:1.55!important;font-size:14px!important;max-width:920px!important;}
+#reportsSection .report-export-row{display:flex!important;gap:10px!important;justify-content:flex-end!important;align-items:center!important;flex-wrap:wrap!important;}
+.gg-bi-shell{display:grid!important;gap:18px!important;width:100%!important;}
+.gg-bi-kpis{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important;}
+.gg-bi-kpi,.gg-bi-card{border:1px solid rgba(151,183,235,.22)!important;background:linear-gradient(180deg,#121824 0%,#0a0f18 100%)!important;border-radius:26px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.045)!important;color:#fff!important;}
+.gg-bi-kpi{min-height:150px!important;padding:22px!important;text-align:left!important;cursor:pointer!important;display:grid!important;align-content:start!important;gap:8px!important;}
+.gg-bi-kpi:hover,.gg-bi-row:hover{border-color:rgba(180,205,255,.5)!important;transform:translateY(-1px)!important;}
+.gg-bi-kpi .label{font-size:11px!important;letter-spacing:.22em!important;text-transform:uppercase!important;color:#98acd2!important;}
+.gg-bi-kpi .value{font-family:var(--display,Georgia,serif)!important;font-size:clamp(28px,3vw,42px)!important;line-height:1!important;color:#fff!important;}
+.gg-bi-kpi .note{font-size:13px!important;line-height:1.45!important;color:#b7c7e3!important;}
+.gg-bi-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px!important;}
+.gg-bi-card{min-height:330px!important;padding:22px!important;display:grid!important;align-content:start!important;gap:14px!important;overflow:hidden!important;}
+.gg-bi-card.full{grid-column:1/-1!important;min-height:auto!important;}
+.gg-bi-head{display:flex!important;justify-content:space-between!important;gap:12px!important;align-items:flex-start!important;margin-bottom:2px!important;}
+.gg-bi-head h3{margin:0 0 6px!important;font-size:21px!important;color:#fff!important;}
+.gg-bi-head p{margin:0!important;color:#aebfe0!important;font-size:13px!important;line-height:1.45!important;}
+.gg-bi-chip{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:30px!important;padding:0 12px!important;border-radius:999px!important;border:1px solid rgba(152,183,235,.22)!important;background:rgba(144,176,235,.08)!important;color:#cfe0ff!important;font-size:11px!important;font-weight:800!important;letter-spacing:.12em!important;text-transform:uppercase!important;white-space:nowrap!important;}
+.gg-bi-row{width:100%!important;border:0!important;border-bottom:1px solid rgba(255,255,255,.06)!important;background:transparent!important;color:#fff!important;padding:13px 0!important;display:grid!important;grid-template-columns:minmax(120px,170px) minmax(160px,1fr) minmax(96px,max-content)!important;gap:16px!important;align-items:center!important;text-align:left!important;cursor:pointer!important;}
+.gg-bi-row:last-child{border-bottom:0!important;}
+.gg-bi-row strong{font-size:15px!important;line-height:1.25!important;overflow-wrap:anywhere!important;}
+.gg-bi-track{height:18px!important;border-radius:999px!important;background:#111a2a!important;border:1px solid rgba(141,170,220,.22)!important;overflow:hidden!important;}
+.gg-bi-fill{height:100%!important;min-width:16px!important;border-radius:999px!important;background:linear-gradient(90deg,#dbe8ff,#83aefb)!important;}
+.gg-bi-row span{justify-self:end!important;font-weight:900!important;color:#dce9ff!important;white-space:nowrap!important;}
+.gg-bi-row.warning .gg-bi-fill{background:linear-gradient(90deg,#ffe8a8,#ffc85a)!important;}
+.gg-bi-row.danger .gg-bi-fill{background:linear-gradient(90deg,#ffd2dd,#ff6d8a)!important;}
+.gg-bi-empty{padding:22px!important;text-align:center!important;border:1px dashed rgba(255,255,255,.16)!important;border-radius:18px!important;color:#9fb1d1!important;}
+.gg-bi-mini-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important;}
+.gg-bi-mini{padding:18px!important;border-radius:20px!important;background:#0a0f18!important;border:1px solid rgba(151,183,235,.18)!important;display:grid!important;gap:6px!important;}
+.gg-bi-mini label{font-size:11px!important;letter-spacing:.16em!important;text-transform:uppercase!important;color:#93a5c7!important;}
+.gg-bi-mini strong{font-family:var(--display,Georgia,serif)!important;font-size:30px!important;color:#fff!important;}
+@media(max-width:1100px){.gg-bi-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}.gg-bi-grid{grid-template-columns:1fr!important}.gg-bi-card.full{grid-column:auto!important}.gg-bi-mini-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}#reportsSection .section-head{grid-template-columns:1fr!important}.report-export-row{justify-content:flex-start!important}}
+@media(max-width:640px){#reportsSection{max-width:min(100vw - 18px,1440px)!important}.gg-bi-kpis,.gg-bi-mini-grid{grid-template-columns:1fr!important}.gg-bi-row{grid-template-columns:1fr!important;gap:8px!important}.gg-bi-row span{justify-self:start!important}.gg-bi-card,.gg-bi-kpi{border-radius:22px!important;padding:18px!important}.gg-bi-track{width:100%!important}}
+</style>
+<script id="gg-reports-dashboard-final-lock-js">
+(function(){
+  'use strict';
+  if (window.__GG_REPORTS_DASHBOARD_FINAL_LOCK__) return;
+  window.__GG_REPORTS_DASHBOARD_FINAL_LOCK__ = true;
+  const peso = v => '₱' + Math.round(Number(v || 0)).toLocaleString('en-PH');
+  const num = v => Number(String(v ?? '').replace(/[^0-9.-]/g,'')) || 0;
+  const safe = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+  const text = v => String(v ?? '').trim();
+  const first = (...vals) => vals.map(text).find(Boolean) || '';
+  const lower = v => text(v).toLowerCase();
+  const isSold = u => lower(u && u.status) === 'sold';
+  const isActive = u => !['sold','archived'].includes(lower(u && u.status));
+  const allUnits = () => Array.isArray(window.Store && window.Store.state && window.Store.state.motorcycles) ? window.Store.state.motorcycles : [];
+  const allSales = () => Array.isArray(window.Store && window.Store.state && window.Store.state.sales) ? window.Store.state.sales : [];
+  const unitCode = u => first(u && u.unit, u && u.unitName, u && u.brandModel, u && u.name, u && u.title, u && u.description, u && u.motorcycle, u && u.modelName);
+  function brandModel(unit, sale){
+    let brand = first(unit && unit.brand, sale && sale.brand, unit && unit.make, sale && sale.make);
+    let model = first(unit && unit.model, sale && sale.model, unit && unit.modelName, sale && sale.modelName);
+    const source = first(unitCode(unit), unit && unit.vehicle, sale && sale.unit, sale && sale.unitName, sale && sale.motorcycle, sale && sale.description);
+    if ((!brand || !model) && source) {
+      const parts = source.replace(/\s+/g,' ').trim().split(' ').filter(Boolean);
+      if (!brand && parts[0]) brand = parts[0];
+      if (!model && parts.length > 1) model = parts.slice(1).join(' ');
+    }
+    return { brand: brand || 'Unmapped Brand', model: model || 'Unmapped Model' };
+  }
+  function selling(sale, unit){ return num(sale && (sale.finalPrice ?? sale.sellingPrice ?? sale.selling ?? sale.amount)) || num(unit && (unit.sellingPrice ?? unit.selling ?? (unit.soldData && (unit.soldData.finalPrice ?? unit.soldData.sellingPrice)))); }
+  function expenses(unit){
+    const e = (unit && unit.expenses) || {};
+    return num(e.pms)+num(e.washingBuffing)+num(e.washing)+num(e.repairsParts)+num(e.repairs)+num(e.labor)+num(e.commission)+num(unit && unit.expensePms)+num(unit && unit.expenseWashingBuffing)+num(unit && unit.expenseRepairsParts)+num(unit && unit.expenseLabor)+num(unit && unit.commission);
+  }
+  function profit(sale, unit){
+    const explicit = num(sale && sale.netProfit);
+    if (explicit) return explicit;
+    return selling(sale, unit) - num(unit && (unit.capital ?? unit.cost ?? unit.pbCosting)) - expenses(unit);
+  }
+  function dayAge(unit){
+    const d = first(unit && unit.dateAdded, unit && unit.dateAcquired, unit && unit.acquisitionDate, unit && unit.stockDate, unit && unit.datePurchased, unit && unit.incomingDate);
+    if (!d) return null;
+    const t = new Date(d).getTime();
+    if (!Number.isFinite(t)) return null;
+    return Math.max(0, Math.floor((Date.now() - t) / 86400000));
+  }
+  function collect(){
+    const units = allUnits();
+    const salesRaw = allSales();
+    const soldUnits = units.filter(isSold);
+    const byId = new Map(units.map(u => [String(u && u.id || ''), u]));
+    const sales = salesRaw.length ? salesRaw.map(s => ({sale:s, unit:byId.get(String(s && (s.unitId || s.motorcycleId) || '')) || soldUnits.find(u => String(u && u.id || '') === String(s && (s.unitId || s.motorcycleId) || '')) || null})).filter(x => x.sale || x.unit) : soldUnits.map(u => ({sale:(u && u.soldData) || {}, unit:u}));
+    const totalSales = sales.reduce((a,x)=>a+selling(x.sale,x.unit),0);
+    const netProfit = sales.reduce((a,x)=>a+profit(x.sale,x.unit),0);
+    const arList = window.Services && typeof window.Services.receivables === 'function' ? window.Services.receivables('all') : [];
+    const openAR = Array.isArray(arList) ? arList.reduce((a,x)=>a+num(x && x.balance),0) : 0;
+    const active = units.filter(isActive);
+    const invValue = active.reduce((a,u)=>a+num(u && (u.capital ?? u.cost ?? u.pbCosting))+expenses(u)-num(((u&&u.expenses)||{}).commission)-num(u&&u.commission),0);
+    const brands = new Map(), models = new Map(), months = new Map();
+    sales.forEach(x => {
+      const bm = brandModel(x.unit || {}, x.sale || {});
+      const amount = selling(x.sale, x.unit);
+      brands.set(bm.brand, (brands.get(bm.brand)||0)+amount);
+      models.set((bm.brand+' '+bm.model).trim(), (models.get((bm.brand+' '+bm.model).trim())||0)+profit(x.sale,x.unit));
+      const d = first(x.sale && x.sale.dateSold, x.sale && x.sale.soldDate, x.sale && x.sale.date, x.unit && x.unit.soldDate, x.unit && x.unit.soldData && x.unit.soldData.dateSold);
+      months.set(d ? String(d).slice(0,7) : 'No Date', (months.get(d ? String(d).slice(0,7) : 'No Date')||0)+profit(x.sale,x.unit));
+    });
+    const bdefs=[['0-10 days',0,10,''],['11-30 days',11,30,''],['31-60 days',31,60,'warning'],['61-90 days',61,90,'danger'],['91+ days',91,99999,'danger']];
+    const aging=bdefs.map(([label,min,max,cls])=>({label,min,max,cls,count:active.filter(u=>{const d=dayAge(u);return d!==null&&d>=min&&d<=max}).length,display:String(active.filter(u=>{const d=dayAge(u);return d!==null&&d>=min&&d<=max}).length)}));
+    const noDate=active.filter(u=>dayAge(u)===null).length;
+    const mapRows = m => [...m.entries()].filter(x=>num(x[1])!==0).sort((a,b)=>num(b[1])-num(a[1])).slice(0,8).map(([label,value])=>({label,value,display:peso(value)}));
+    return {units,soldUnits,active,totalSales,netProfit,openAR,invValue,brands:mapRows(brands),models:mapRows(models),months:mapRows(months).reverse(),aging,noDate};
+  }
+  function rowList(items, key){
+    const list = Array.isArray(items) ? items : [];
+    if (!list.length) return '<div class="gg-bi-empty">No report data yet. Add/import source records first.</div>';
+    const field = key || 'value';
+    const max = Math.max(1, ...list.map(i => Math.abs(num(i[field]))));
+    return list.map(i => {
+      const val = Math.abs(num(i[field]));
+      const pct = Math.max(val ? 4 : 0, Math.round((val / max) * 100));
+      return `<button class="gg-bi-row ${safe(i.cls || '')}" type="button" data-bi-label="${safe(i.label)}"><strong>${safe(i.label)}</strong><div class="gg-bi-track"><div class="gg-bi-fill" style="width:${pct}%"></div></div><span>${safe(i.display ?? i[field])}</span></button>`;
+    }).join('');
+  }
+  function jump(tab){
+    const btn = document.querySelector(`[data-tab="${tab}"]`);
+    if (btn) btn.click();
+    else if (window.GGApp && window.GGApp.View && window.GGApp.UI) { window.GGApp.View.tab = tab; window.GGApp.UI.renderAll && window.GGApp.UI.renderAll(); }
+  }
+  function render(){
+    const target=document.getElementById('reportsSection');
+    if(!target) return false;
+    const s=collect();
+    target.innerHTML=`<div class="section-head"><div><h2>Reports Dashboard</h2><p>Clean dealership reporting from one source of truth: sold records, active inventory, AR, expenses, and aging. Every box is a drill-down to the real source.</p></div><div class="report-export-row"><button class="btn ghost" data-report-export="json" type="button">Export Report</button><button class="btn primary" onclick="window.print()" type="button">Print</button></div></div><div class="gg-bi-shell"><div class="gg-bi-kpis"><button class="gg-bi-kpi" type="button" data-bi-jump="sold"><div class="label">Total Sales</div><div class="value">${peso(s.totalSales)}</div><div class="note">Approved sold records • ${s.soldUnits.length} sold unit(s)</div></button><button class="gg-bi-kpi" type="button" data-bi-jump="financial"><div class="label">Net Profit</div><div class="value">${peso(s.netProfit)}</div><div class="note">Selling less capital, expenses, repairs, and commission</div></button><button class="gg-bi-kpi" type="button" data-bi-jump="financial"><div class="label">Open AR</div><div class="value">${peso(s.openAR)}</div><div class="note">Remaining receivable balance from source records</div></button><button class="gg-bi-kpi" type="button" data-bi-jump="inventory"><div class="label">Live Stock Value</div><div class="value">${peso(s.invValue)}</div><div class="note">${s.active.length} active unit(s), excluding sold/archived</div></button></div><div class="gg-bi-grid"><div class="gg-bi-card"><div class="gg-bi-head"><div><h3>Sales by Brand</h3><p>Total selling amount grouped by brand from sold/source units.</p></div><span class="gg-bi-chip">Sold Source</span></div>${rowList(s.brands)}</div><div class="gg-bi-card"><div class="gg-bi-head"><div><h3>Monthly Net Profit</h3><p>Profit trend from sales dates. No duplicate report dataset.</p></div><span class="gg-bi-chip">Financial</span></div>${rowList(s.months)}</div><div class="gg-bi-card"><div class="gg-bi-head"><div><h3>Inventory Aging</h3><p>Active units only. Unknown acquisition dates stay separate.</p></div><span class="gg-bi-chip">Inventory</span></div>${rowList(s.aging,'count')}${s.noDate?`<button class="gg-bi-row" type="button" data-bi-jump="inventory"><strong>No acquisition date</strong><div class="gg-bi-track"><div class="gg-bi-fill" style="width:100%"></div></div><span>${s.noDate}</span></button>`:''}</div><div class="gg-bi-card"><div class="gg-bi-head"><div><h3>Most Profitable Models</h3><p>Net profit grouped by brand/model to guide buying decisions.</p></div><span class="gg-bi-chip">Decision</span></div>${rowList(s.models)}</div><div class="gg-bi-card full"><div class="gg-bi-head"><div><h3>Source Integrity Snapshot</h3><p>Current report source counts after import/reconciliation.</p></div><span class="gg-bi-chip">One Source</span></div><div class="gg-bi-mini-grid"><div class="gg-bi-mini"><label>Total Units</label><strong>${s.units.length}</strong></div><div class="gg-bi-mini"><label>Sold Units</label><strong>${s.soldUnits.length}</strong></div><div class="gg-bi-mini"><label>Active Units</label><strong>${s.active.length}</strong></div><div class="gg-bi-mini"><label>Open AR</label><strong>${peso(s.openAR)}</strong></div></div></div></div></div>`;
+    return true;
+  }
+  function install(){
+    const app=window.GGApp || {};
+    const UI=app.UI || window.UI;
+    if (UI) {
+      UI.renderReportsSection = render;
+      const oldRenderAll = UI.renderAll;
+      if (oldRenderAll && !UI.__ggReportsFinalRenderAll) {
+        UI.__ggReportsFinalRenderAll = true;
+        UI.renderAll = function(){ const r = oldRenderAll.apply(this, arguments); if ((window.View || app.View || {}).tab === 'reports') render(); return r; };
+      }
+    }
+    if ((window.View || app.View || {}).tab === 'reports') render();
+    return !!UI;
+  }
+  document.addEventListener('click', function(e){
+    const j = e.target && e.target.closest && e.target.closest('[data-bi-jump]');
+    if (j) { e.preventDefault(); jump(j.getAttribute('data-bi-jump')); return; }
+    if (e.target && e.target.closest && e.target.closest('[data-tab="reports"],[data-mobile-tab="reports"]')) setTimeout(function(){ install(); render(); }, 80);
+  }, true);
+  document.addEventListener('DOMContentLoaded', function(){ install(); setTimeout(install,100); setTimeout(install,500); });
+  let tries=0;
+  const timer=setInterval(function(){ tries++; const ok=install(); if (tries>30 || (ok && (window.View || window.GGApp?.View || {}).tab === 'reports')) clearInterval(timer); }, 200);
+})();
+</script>
+
+
+
+<style id="gg-structured-excel-export-ui">
+.gg-export-preview-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.82);z-index:9999;backdrop-filter:blur(10px)}
+.gg-export-preview-modal.active{display:flex}
+.gg-export-preview-card{width:min(980px,calc(100vw - 24px));max-height:90vh;overflow:auto;border-radius:26px;border:1px solid rgba(255,255,255,.10);background:linear-gradient(180deg,#10141d,#07090e);box-shadow:0 26px 80px rgba(0,0,0,.55);padding:22px;color:#f7f9ff}
+.gg-export-preview-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:14px;margin-bottom:16px}
+.gg-export-preview-head h2{margin:0;font-family:var(--display,Georgia,serif);font-size:30px;line-height:1;color:#fff}
+.gg-export-preview-head p{margin:7px 0 0;color:#aebbd0;font-size:13px;line-height:1.45}
+.gg-export-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
+.gg-export-stat{border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.035);padding:14px;min-height:86px}
+.gg-export-stat span{display:block;color:#96a4bc;font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.gg-export-stat strong{display:block;margin-top:8px;font-size:24px;font-family:var(--display,Georgia,serif)}
+.gg-export-sheet-list{display:grid;gap:8px;margin-top:12px}
+.gg-export-sheet-row{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.025);border-radius:15px;padding:10px 12px}
+.gg-export-sheet-row strong{font-size:13px}.gg-export-sheet-row small{display:block;margin-top:3px;color:#9eabba;font-size:11px}.gg-export-count{font-weight:800;color:#7dffac}
+.gg-export-actions{display:flex;gap:10px;justify-content:flex-end;align-items:center;flex-wrap:wrap;margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)}
+.gg-export-note{margin-top:10px;color:#a8b4c8;font-size:12px;line-height:1.45}.gg-export-warn{color:#ffd267}
+@media(max-width:760px){.gg-export-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.gg-export-preview-head{display:grid}.gg-export-actions{justify-content:flex-start}.gg-export-sheet-row{grid-template-columns:24px 1fr}}
+@media(max-width:480px){.gg-export-grid{grid-template-columns:1fr}.gg-export-preview-card{padding:16px;border-radius:20px}}
+</style>
+<script id="gg-structured-excel-export-engine">
+(function(){
+  if (window.__GG_STRUCTURED_EXCEL_EXPORT_ENGINE__) return;
+  window.__GG_STRUCTURED_EXCEL_EXPORT_ENGINE__ = true;
+
+  const EXPORT_SHEETS = [
+    { key:'inventory', label:'Inventory', note:'Filtered active/inventory units from the Inventory source.' },
+    { key:'sold', label:'Sold Records', note:'Sold units and sales details from Store source.' },
+    { key:'ar', label:'Accounts Receivable', note:'Open balances and client receivables.' },
+    { key:'financial', label:'Financial Summary', note:'Sales, profit, AR exposure, inventory value, and costs.' },
+    { key:'documents', label:'Documents', note:'OR/CR, plate, buyer, first owner, and release tracking.' },
+    { key:'reports', label:'Reports', note:'Report dashboard source-of-truth summary.' },
+    { key:'importAudit', label:'Import Audit Log', note:'Excel import history, preview, rollback, and change-log records when available.' }
+  ];
+
+  function esc(value){ return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch])); }
+  function xml(value){ return String(value ?? '').replace(/[&<>]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch])); }
+  function norm(value){ return String(value ?? '').trim().toLowerCase(); }
+  function moneyNum(value){
+    if (typeof safeMoney === 'function') return safeMoney(value);
+    const n = Number(String(value ?? '').replace(/[^0-9.-]/g,''));
+    return Number.isFinite(n) ? n : 0;
+  }
+  function pesoText(value){ return typeof peso === 'function' ? peso(value) : ('₱' + moneyNum(value).toLocaleString('en-PH',{maximumFractionDigits:2})); }
+  function dateText(value){ return value ? String(value).slice(0,10) : ''; }
+  function rowsToObjects(rows){ return Array.isArray(rows) ? rows.filter(Boolean) : []; }
+  function activeUnit(unit){ return !['sold','archived'].includes(norm(unit?.status)); }
+  function unitExpense(unit, key){
+    const expenses = unit?.expenses || unit?.expenseData || {};
+    const repairs = unit?.repairCosts || unit?.repairs || {};
+    const direct = unit?.[key];
+    const aliases = {
+      pms:['pms','PMS'], washing:['washing','buffing','washingBuffing','washing_buffing','WASHING/BUFFING'], repairs:['repairs','repairParts','repairsParts','parts','REPAIRS/PARTS'], labor:['labor','Labor'], commission:['commission','COMMISION','COMMISSION']
+    }[key] || [key];
+    for (const a of aliases){
+      if (direct !== undefined && a === key) return moneyNum(direct);
+      if (expenses && expenses[a] !== undefined) return moneyNum(expenses[a]);
+      if (repairs && repairs[a] !== undefined) return moneyNum(repairs[a]);
+    }
+    return 0;
+  }
+  function totalRepair(unit){ return unitExpense(unit,'pms') + unitExpense(unit,'washing') + unitExpense(unit,'repairs') + unitExpense(unit,'labor'); }
+  function totalExpense(unit){ return totalRepair(unit) + unitExpense(unit,'commission') + moneyNum(unit?.expenseTotal || unit?.totalExpenses || unit?.otherOpex); }
+  function inventoryValue(unit){ return moneyNum(unit?.capital || unit?.capitalCost || unit?.cost) + totalRepair(unit); }
+  function ageDays(unit){
+    const date = unit?.dateAdded || unit?.dateAcquired || unit?.acquisitionDate || unit?.stockDate || '';
+    if (!date) return '';
+    const t = new Date(date).getTime();
+    if (!Number.isFinite(t)) return '';
+    return Math.max(0, Math.floor((Date.now() - t) / 86400000));
+  }
+  function passesAge(unit){
+    const range = String(window.View?.inventoryAgeRange || 'all');
+    if (range === 'all') return true;
+    const days = ageDays(unit);
+    if (days === '') return false;
+    const m = range.match(/(\d+)\s*-\s*(\d+)/);
+    if (m) return days >= Number(m[1]) && days <= Number(m[2]);
+    const gte = range.match(/(\d+)\+/);
+    if (gte) return days >= Number(gte[1]);
+    if (range === 'over30') return days >= 30;
+    if (range === 'over60') return days >= 60;
+    return true;
+  }
+  function filteredInventory(){
+    const units = rowsToObjects(window.Store?.state?.motorcycles);
+    const v = window.View || {};
+    return units.filter(unit => {
+      if (!activeUnit(unit)) return false;
+      if (v.inventoryWarehouse && v.inventoryWarehouse !== 'all' && norm(unit.warehouse || unit.location) !== norm(v.inventoryWarehouse)) return false;
+      if (v.warehouse && v.warehouse !== 'all' && norm(unit.warehouse || unit.location) !== norm(v.warehouse)) return false;
+      if (v.inventoryStatus && v.inventoryStatus !== 'all' && norm(unit.status) !== norm(v.inventoryStatus)) return false;
+      if (v.inventoryBrand && v.inventoryBrand !== 'all' && norm(unit.brand || unit.unit || unit.modelName).indexOf(norm(v.inventoryBrand)) < 0) return false;
+      if (v.inventoryModel && v.inventoryModel !== 'all' && norm(unit.model || unit.unit || unit.modelName).indexOf(norm(v.inventoryModel)) < 0) return false;
+      const q = norm(v.globalSearch || v.inventorySearch || '');
+      if (q) {
+        const hay = norm([unit.brand,unit.model,unit.unit,unit.plate,unit.plateNo,unit.engine,unit.engineNo,unit.chassis,unit.chassisNo,unit.buyer,unit.firstOwner].join(' '));
+        if (!hay.includes(q)) return false;
+      }
+      if (!passesAge(unit)) return false;
+      return true;
+    });
+  }
+  function soldUnits(){
+    const state = window.Store?.state || {};
+    const fromUnits = rowsToObjects(state.motorcycles).filter(u => norm(u.status)==='sold' || u.soldData);
+    if (fromUnits.length) return fromUnits;
+    return rowsToObjects(state.sales);
+  }
+  function receivableRows(){
+    try { if (window.Services?.receivables) return rowsToObjects(window.Services.receivables('all')); } catch(_){ }
+    const state = window.Store?.state || {};
+    const sales = rowsToObjects(state.sales);
+    const units = rowsToObjects(state.motorcycles);
+    const ar = [];
+    [...sales, ...units].forEach(item => {
+      const bal = moneyNum(item.balance || item.receivable || item.arBalance || item.soldData?.balance || item.soldData?.receivable);
+      if (bal > 0) ar.push(item);
+    });
+    return ar;
+  }
+  function auditRows(){
+    const state = window.Store?.state || {};
+    return rowsToObjects(state.importAuditLog || state.excelImportAudit || state.importAudits || state.auditLog).filter(x => {
+      const action = norm(x.action || x.type || x.title || '');
+      return action.includes('import') || action.includes('excel') || action.includes('migration') || (state.importAuditLog || state.excelImportAudit || state.importAudits);
+    });
+  }
+  function makeExportData(){
+    const state = window.Store?.state || {};
+    const inv = filteredInventory();
+    const sold = soldUnits();
+    const ar = receivableRows();
+    const summary = (()=>{ try { return window.Services?.enterpriseReportSummary ? window.Services.enterpriseReportSummary() : {}; } catch(_){ return {}; } })();
+    const invRows = inv.map(u => ({
+      'Unit ID':u.id, 'Status':u.status, 'Warehouse':u.warehouse || u.location, 'Brand':u.brand || u.unit || '', 'Model':u.model || u.modelName || '', 'Color':u.color || '', 'Plate No':u.plate || u.plateNo || '', 'Engine No':u.engine || u.engineNo || '', 'Chassis No':u.chassis || u.chassisNo || '', 'Date Added':dateText(u.dateAdded || u.dateAcquired || u.acquisitionDate || u.stockDate), 'Days In Stock':ageDays(u), 'Vendor Source':u.vendorSource || u.casa || u.vendor || '', 'Capital':moneyNum(u.capital || u.capitalCost || u.cost), 'PMS':unitExpense(u,'pms'), 'Washing/Buffing':unitExpense(u,'washing'), 'Repairs/Parts':unitExpense(u,'repairs'), 'Labor':unitExpense(u,'labor'), 'Repair Total':totalRepair(u), 'Inventory Value':inventoryValue(u), 'First Owner':u.firstOwner || u.first_owner || '', 'Buyer':u.buyer || u.soldData?.buyer || ''
+    }));
+    const soldRows = sold.map(u => {
+      const sd = u.soldData || u.sale || u;
+      return { 'Unit ID':u.id || sd.unitId, 'Invoice':sd.invoice || u.invoice || '', 'Date Sold':dateText(sd.dateSold || u.dateSold), 'Buyer':sd.buyer || u.buyer || '', 'First Owner':u.firstOwner || sd.firstOwner || '', 'Brand':u.brand || sd.brand || u.unit || '', 'Model':u.model || sd.model || '', 'Plate No':u.plate || u.plateNo || sd.plate || '', 'Engine No':u.engine || u.engineNo || sd.engine || '', 'Dealer Price':moneyNum(sd.dealerPrice || u.dealerPrice), 'Selling Price':moneyNum(sd.finalPrice || sd.sellingPrice || u.sellingPrice || u.finalPrice), 'Capital':moneyNum(u.capital || sd.capital), 'PMS':unitExpense(u,'pms'), 'Washing/Buffing':unitExpense(u,'washing'), 'Repairs/Parts':unitExpense(u,'repairs'), 'Labor':unitExpense(u,'labor'), 'Commission':unitExpense(u,'commission') || moneyNum(sd.commission), 'Total Cost':moneyNum(sd.totalCost || u.totalCost) || (moneyNum(u.capital || sd.capital)+totalRepair(u)+unitExpense(u,'commission')), 'Net Profit':moneyNum(sd.netProfit || u.netProfit), 'AR Balance':moneyNum(sd.balance || u.balance || u.receivable) };
+    });
+    const arRows = ar.map(x => ({ 'Reference ID':x.id || x.saleId || x.unitId, 'Client/Buyer':x.buyer || x.client || x.customer || x.soldData?.buyer || '', 'Plate No':x.plate || x.plateNo || x.soldData?.plate || '', 'Engine No':x.engine || x.engineNo || '', 'Invoice':x.invoice || x.soldData?.invoice || '', 'Date Sold':dateText(x.dateSold || x.soldData?.dateSold), 'Total Amount':moneyNum(x.finalPrice || x.sellingPrice || x.total || x.soldData?.finalPrice), 'Paid':moneyNum(x.paid || x.totalPaid || x.soldData?.paid), 'Balance':moneyNum(x.balance || x.receivable || x.arBalance || x.soldData?.balance), 'Aging Days':x.agingDays || x.daysOverdue || '', 'Status':x.status || x.arStatus || '' }));
+    const activeInventoryValue = inv.reduce((a,u)=>a+inventoryValue(u),0);
+    const financialRows = [
+      {'Metric':'Total Sales','Value':moneyNum(summary.sales || soldRows.reduce((a,r)=>a+moneyNum(r['Selling Price']),0))},
+      {'Metric':'Net Profit','Value':moneyNum(summary.profit || soldRows.reduce((a,r)=>a+moneyNum(r['Net Profit']),0))},
+      {'Metric':'AR Exposure','Value':moneyNum(summary.ar || arRows.reduce((a,r)=>a+moneyNum(r.Balance),0))},
+      {'Metric':'Active Inventory Count','Value':inv.length},
+      {'Metric':'Inventory Motorcycle Value','Value':activeInventoryValue},
+      {'Metric':'Total Capital - Active','Value':inv.reduce((a,u)=>a+moneyNum(u.capital || u.capitalCost || u.cost),0)},
+      {'Metric':'Repair Total - Active','Value':inv.reduce((a,u)=>a+totalRepair(u),0)},
+      {'Metric':'Commission - Sold','Value':sold.reduce((a,u)=>a+(unitExpense(u,'commission') || moneyNum(u.soldData?.commission || u.commission)),0)}
+    ];
+    const documentRows = rowsToObjects(state.motorcycles).map(u => ({ 'Unit ID':u.id, 'Status':u.status, 'Buyer':u.buyer || u.soldData?.buyer || '', 'First Owner':u.firstOwner || '', 'Plate No':u.plate || u.plateNo || '', 'Engine No':u.engine || u.engineNo || '', 'Chassis No':u.chassis || u.chassisNo || '', 'Original OR/CR':u.originalOrCr || u.docs?.originalOrCr || u.documents?.originalOrCr || '', 'Copy OR/CR':u.copyOrCr || u.docs?.copyOrCr || u.documents?.copyOrCr || '', 'Plate Status':u.plateStatus || u.docs?.plateStatus || '', 'Docs Status':u.documentStatus || u.docsStatus || '', 'Orig Docs Date Received':dateText(u.origDocsDateReceived || u.docs?.origDocsDateReceived), 'Date Received By Client':dateText(u.dateReceivedByClient || u.docs?.dateReceivedByClient), 'Mode Of Receipt':u.modeOfReceipt || u.docs?.modeOfReceipt || '', 'To Follow':Array.isArray(u.toFollow) ? u.toFollow.join(', ') : (u.toFollow || '') }));
+    const reportRows = [];
+    (summary.monthly || []).forEach(r => reportRows.push({'Report Section':'Monthly Profit','Label':r.label,'Value':moneyNum(r.value),'Display':r.display || ''}));
+    (summary.brands || []).forEach(r => reportRows.push({'Report Section':'Sales by Brand','Label':r.label,'Value':moneyNum(r.value),'Display':r.display || ''}));
+    (summary.aging || []).forEach(r => reportRows.push({'Report Section':'Inventory Aging','Label':r.label,'Value':r.count ?? r.value ?? 0,'Display':r.display || ''}));
+    (summary.reservations || []).forEach(r => reportRows.push({'Report Section':'Reservations','Label':r.label,'Value':r.count ?? r.value ?? 0,'Display':r.display || ''}));
+    if (!reportRows.length) reportRows.push({'Report Section':'Summary','Label':'No report rows available','Value':'','Display':''});
+    const importRows = auditRows().map(x => ({ 'Date':dateText(x.date || x.createdAt || x.exportedAt), 'User':x.user || x.username || '', 'Action':x.action || x.type || x.title || '', 'File':x.fileName || x.filename || x.sourceFile || '', 'Rows Scanned':x.rowsScanned || x.scanned || '', 'Imported':x.imported || x.validRows || '', 'Updated':x.updated || '', 'Skipped':x.skipped || x.blocked || '', 'Duplicates':x.duplicates || '', 'Details':x.detail || x.message || x.notes || '' }));
+    return { inventory:invRows, sold:soldRows, ar:arRows, financial:financialRows, documents:documentRows, reports:reportRows, importAudit:importRows };
+  }
+  function worksheetXml(name, rows){
+    const safeName = xml(String(name).slice(0,31));
+    const headers = [...new Set(rows.flatMap(row => Object.keys(row || {})))];
+    const allRows = rows.length ? rows : [Object.fromEntries((headers.length?headers:['No Data']).map(h=>[h,'']))];
+    const finalHeaders = headers.length ? headers : Object.keys(allRows[0] || {'No Data':''});
+    const headerRow = '<Row>' + finalHeaders.map(h => `<Cell><Data ss:Type="String">${xml(h)}</Data></Cell>`).join('') + '</Row>';
+    const body = allRows.map(row => '<Row>' + finalHeaders.map(h => {
+      const v = row?.[h] ?? '';
+      const isNum = typeof v === 'number' && Number.isFinite(v);
+      return `<Cell><Data ss:Type="${isNum?'Number':'String'}">${xml(isNum ? String(v) : String(v))}</Data></Cell>`;
+    }).join('') + '</Row>').join('');
+    return `<Worksheet ss:Name="${safeName}"><Table>${headerRow}${body}</Table></Worksheet>`;
+  }
+  function exportWorkbook(selectedKeys){
+    const data = makeExportData();
+    const sheets = EXPORT_SHEETS.filter(s => selectedKeys.includes(s.key));
+    const book = `<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"><Author>Good Goods</Author><Created>${xml(new Date().toISOString())}</Created></DocumentProperties><Styles><Style ss:ID="Default" ss:Name="Normal"><Alignment ss:Vertical="Center"/><Font ss:FontName="Calibri" ss:Size="11"/></Style></Styles>${sheets.map(s => worksheetXml(s.label, data[s.key] || [])).join('')}</Workbook>`;
+    const blob = new Blob([book], { type:'application/vnd.ms-excel;charset=utf-8' });
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0,10);
+    a.href = URL.createObjectURL(blob);
+    a.download = `goodgoods-structured-export-${stamp}.xls`;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    try { window.Services?.log?.('structured_excel_export', `Exported ${sheets.map(s=>s.label).join(', ')}`); window.Store?.save?.({fromGuard:true}); } catch(_){ }
+  }
+  function ensureModal(){
+    let modal = document.getElementById('ggStructuredExportModal');
+    if (modal) return modal;
+    modal = document.createElement('div');
+    modal.id = 'ggStructuredExportModal';
+    modal.className = 'gg-export-preview-modal';
+    modal.innerHTML = '<div class="gg-export-preview-card"><div id="ggStructuredExportContent"></div></div>';
+    document.body.appendChild(modal);
+    modal.addEventListener('click', e => { if (e.target === modal || e.target.closest('[data-gg-export-close]')) modal.classList.remove('active'); });
+    return modal;
+  }
+  function renderModal(){
+    const data = makeExportData();
+    const modal = ensureModal();
+    const totalRows = Object.values(data).reduce((a,rows)=>a+(Array.isArray(rows)?rows.length:0),0);
+    const activeValue = (data.financial || []).find(r => r.Metric === 'Inventory Motorcycle Value')?.Value || 0;
+    const content = modal.querySelector('#ggStructuredExportContent');
+    content.innerHTML = `<div class="gg-export-preview-head"><div><h2>Structured Excel Export Preview</h2><p>Exports exact system data into a multi-sheet Excel workbook. Inventory sheet respects current Inventory filters where available.</p></div><button class="btn ghost" type="button" data-gg-export-close>Close</button></div>
+      <div class="gg-export-grid"><div class="gg-export-stat"><span>Total Export Rows</span><strong>${esc(totalRows)}</strong></div><div class="gg-export-stat"><span>Inventory Rows</span><strong>${esc(data.inventory.length)}</strong></div><div class="gg-export-stat"><span>AR Rows</span><strong>${esc(data.ar.length)}</strong></div><div class="gg-export-stat"><span>Inventory Value</span><strong>${esc(pesoText(activeValue))}</strong></div></div>
+      <div class="gg-export-sheet-list">${EXPORT_SHEETS.map(s => `<label class="gg-export-sheet-row"><input type="checkbox" data-gg-export-sheet="${esc(s.key)}" checked><div><strong>${esc(s.label)}</strong><small>${esc(s.note)}</small></div><span class="gg-export-count">${esc((data[s.key] || []).length)} rows</span></label>`).join('')}</div>
+      <p class="gg-export-note"><span class="gg-export-warn">Rule lock:</span> this exporter only reads Store source data. It does not create duplicate datasets and does not change records.</p>
+      <div class="gg-export-actions"><button class="btn ghost" type="button" data-gg-export-close>Cancel</button><button class="btn primary" type="button" id="ggDownloadStructuredExcelBtn">Download Excel</button></div>`;
+    modal.classList.add('active');
+  }
+  function selectedSheets(){ return [...document.querySelectorAll('[data-gg-export-sheet]:checked')].map(x => x.getAttribute('data-gg-export-sheet')).filter(Boolean); }
+  function attachReportButton(){
+    const section = document.getElementById('reportsSection');
+    if (!section) return;
+    const row = section.querySelector('.report-export-row') || section.querySelector('.section-head > div:last-child');
+    if (row && !document.getElementById('ggStructuredExportBtn')) {
+      const btn = document.createElement('button');
+      btn.className = 'btn success';
+      btn.id = 'ggStructuredExportBtn';
+      btn.type = 'button';
+      btn.textContent = 'Export Excel';
+      row.insertBefore(btn, row.firstChild || null);
+    }
+  }
+  const originalRenderReports = window.UI?.renderReportsSection ? window.UI.renderReportsSection.bind(window.UI) : null;
+  if (originalRenderReports) {
+    window.UI.renderReportsSection = function(){ const result = originalRenderReports(); setTimeout(attachReportButton,0); return result; };
+  }
+  document.addEventListener('click', function(e){
+    if (e.target?.closest?.('#ggStructuredExportBtn')) { e.preventDefault(); e.stopImmediatePropagation(); renderModal(); return; }
+    if (e.target?.closest?.('#ggDownloadStructuredExcelBtn')) { e.preventDefault(); e.stopImmediatePropagation(); const keys = selectedSheets(); if (!keys.length) { alert('Select at least one sheet to export.'); return; } exportWorkbook(keys); ensureModal().classList.remove('active'); return; }
+  }, true);
+  document.addEventListener('DOMContentLoaded', attachReportButton);
+  setTimeout(attachReportButton, 400);
+})();
+</script>
+
+
+<!-- GG TEAM EXCEL FULL MIGRATION ENGINE -->
+<script id="gg-team-excel-migration-engine">
+window.GG_TEAM_EXCEL_MIGRATION = {
+  version: "1.0",
+  supportedHeaders: {
+    "UNIT":"unit",
+    "COLOR":"color",
+    "CHASSIS NO":"chassisNumber",
+    "ENGINE NO":"engineNumber",
+    "PLATE NO":"plateNumber",
+    "CASA":"vendorSource",
+    "BUYER":"buyerName",
+    "FIRST OWNER":"firstOwner",
+    "BATCH":"batch",
+    "RECEIVABLE":"receivableBalance",
+    "DATE SOLD":"dateSold",
+    "ID/DOS with wet sign?":"idDosWetSign",
+    "ID & DOS received by client?":"idDosClientReceived",
+    "On-Hand Orig":"onHandOriginal",
+    "ORIG DOCS DATE RECEIVED":"origDocsDateReceived",
+    "Received":"docsReceived",
+    "DATE RECEIVED BY CLIENT":"dateReceivedByClient",
+    "MODE OF RECEIPT":"modeOfReceipt",
+    "AGING (IN DAYS)":"agingDays",
+    "BRANCH":"branch",
+    "PLATE STATUS":"plateStatus",
+    "PLATE RECEIVED BY CLIENT":"plateReceivedByClient",
+    "UNIT COST":"unitCost",
+    "TF":"transferFee",
+    "LOGISTICS":"logistics",
+    "OPEX":"operationalExpense",
+    "PMS":"pms",
+    "WASHING/BUFFING":"washingBuffing",
+    "REPAIRS/PARTS":"repairsParts",
+    "Labor":"labor",
+    "COMMISSION":"commission",
+    "GG Commission fee":"ggCommissionFee",
+    "TOTAL OPEX":"totalOpex",
+    "TOTAL COST":"totalCost",
+    "DEALER PRICE":"dealerPrice",
+    "SELLING PRICE / INCOM":"sellingPrice",
+    "OTHER OPEX":"otherOpex",
+    "NET INCOME":"netIncome"
+  },
+
+  normalizeCasa(value){
+    if(!value) return "";
+    const v = String(value).trim().toUpperCase();
+    const map = {
+      "PB FELIX":"PB FELIX AVE",
+      "PB FELIX AVENUE":"PB FELIX AVE",
+      "PB MARKET":"PB MARKET AVE"
+    };
+    return map[v] || v;
+  },
+
+  computeRepairExpense(row){
+    const num = v => Number(String(v || 0).replace(/[^0-9.-]/g,'')) || 0;
+    return (
+      num(row.pms) +
+      num(row.washingBuffing) +
+      num(row.repairsParts) +
+      num(row.labor)
+    );
+  },
+
+  computeTrueUnitCost(row){
+    const num = v => Number(String(v || 0).replace(/[^0-9.-]/g,'')) || 0;
+    return (
+      num(row.unitCost) +
+      this.computeRepairExpense(row) +
+      num(row.transferFee) +
+      num(row.logistics) +
+      num(row.operationalExpense) +
+      num(row.commission)
+    );
+  },
+
+  shouldMarkAsSold(row){
+    const buyer = String(row.buyerName || "").trim().toUpperCase();
+    return !!buyer &&
+      !/^(NOT\s*YET\s*SOLD|UNSOLD|AVAILABLE|N\/?A|NA|NONE|-|—)$/i.test(buyer) &&
+      !!row.dateSold;
+  },
+
+  preserveConfidentialValues(existingRow, importedRow){
+    const protectedFields = [
+      "unitCost","dealerPrice","sellingPrice",
+      "netIncome","totalCost","totalOpex"
+    ];
+
+    protectedFields.forEach(field => {
+      const incoming = importedRow[field];
+      if(
+        incoming === "" ||
+        incoming === null ||
+        incoming === undefined
+      ){
+        importedRow[field] = existingRow?.[field] ?? incoming;
+      }
+    });
+
+    return importedRow;
+  }
+};
+</script>
+
+
+<!-- GG IMPORT ENGINE STATUS -->
+<script>
+window.GG_IMPORT_ENGINE_MODE = {
+  inventoryOnly: true,
+  fullHistoricalMigration: true,
+  incrementalSync: true,
+  noBlankFinancialOverwrite: true,
+  vendorCasaSync: true,
+  repairExpensePerUnit: true
+};
 </script>
 
 </body>
